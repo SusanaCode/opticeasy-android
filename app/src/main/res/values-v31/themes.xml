@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.OpticEasy.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/optic_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_transparent</item>
+        <item name="windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
+        <item name="postSplashScreenTheme">@style/Theme.OpticEasy</item>
+    </style>
+
+</resources>
