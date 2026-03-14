@@ -1,6 +1,7 @@
 package com.opticeasy.app.viewmodel.clientes
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.opticeasy.app.data.remote.dto.clientes.ClienteDto
 import com.opticeasy.app.data.repository.ClientesRepository
@@ -16,8 +17,10 @@ sealed class ClientesBuscarState {
 }
 
 class ClientesBuscarViewModel(
-    private val repo: ClientesRepository = ClientesRepository()
-) : ViewModel() {
+    application: Application
+) : AndroidViewModel(application) {
+
+    private val repo = ClientesRepository(application.applicationContext)
 
     private val _state = MutableStateFlow<ClientesBuscarState>(ClientesBuscarState.Idle)
     val state: StateFlow<ClientesBuscarState> = _state
@@ -58,14 +61,12 @@ class ClientesBuscarViewModel(
                     return@launch
                 }
 
-
                 val lista = repo.buscarClientes(
                     nombre = n,
                     apellidos = a,
                     dni = d,
                     telefono = t
                 )
-
 
                 val filtrada = if (hayCodigo) {
                     val id = cod.toIntOrNull()

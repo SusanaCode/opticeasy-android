@@ -1,6 +1,7 @@
 package com.opticeasy.app.viewmodel.clientes
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.opticeasy.app.data.remote.dto.clientes.ClienteDto
 import com.opticeasy.app.data.remote.dto.clientes.ClienteUpdateRequestDto
@@ -18,8 +19,10 @@ sealed class ClienteDetalleState {
 }
 
 class ClienteDetalleViewModel(
-    private val repo: ClientesRepository = ClientesRepository()
-) : ViewModel() {
+    application: Application
+) : AndroidViewModel(application) {
+
+    private val repo = ClientesRepository(application.applicationContext)
 
     private val _state = MutableStateFlow<ClienteDetalleState>(ClienteDetalleState.Idle)
     val state: StateFlow<ClienteDetalleState> = _state
@@ -41,7 +44,6 @@ class ClienteDetalleViewModel(
             try {
                 _state.value = ClienteDetalleState.Loading
                 repo.actualizarCliente(idCliente, req)
-                // recargar para mostrar datos frescos
                 val cliente = repo.obtenerClientePorId(idCliente)
                 _state.value = ClienteDetalleState.Success(cliente)
             } catch (e: Exception) {

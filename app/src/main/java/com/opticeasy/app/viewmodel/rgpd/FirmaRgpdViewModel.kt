@@ -1,6 +1,7 @@
 package com.opticeasy.app.viewmodel.rgpd
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.opticeasy.app.data.remote.dto.rgpd.FirmaRgpdRequestDto
 import com.opticeasy.app.data.repository.RgpdRepository
@@ -8,9 +9,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 sealed class FirmaRgpdUiState {
     data object Idle : FirmaRgpdUiState()
@@ -20,8 +18,10 @@ sealed class FirmaRgpdUiState {
 }
 
 class FirmaRgpdViewModel(
-    private val repo: RgpdRepository = RgpdRepository()
-) : ViewModel() {
+    application: Application
+) : AndroidViewModel(application) {
+
+    private val repo = RgpdRepository(application.applicationContext)
 
     private val _state = MutableStateFlow<FirmaRgpdUiState>(FirmaRgpdUiState.Idle)
     val state: StateFlow<FirmaRgpdUiState> = _state
@@ -34,9 +34,7 @@ class FirmaRgpdViewModel(
         _state.value = FirmaRgpdUiState.Error(msg)
     }
 
-
     fun guardarFirma(clienteId: Int, imagenBase64Png: String) {
-
         if (clienteId <= 0) {
             setError("ID cliente inválido")
             return

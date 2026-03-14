@@ -18,6 +18,7 @@ import com.opticeasy.app.data.remote.dto.revisiones_gafa.RevisionGafaListItemDto
 import com.opticeasy.app.data.remote.dto.Revisiones_lc.RevisionLcCreateRequestDto
 import com.opticeasy.app.data.remote.dto.Revisiones_lc.RevisionLcCreateResponseDto
 import com.opticeasy.app.data.remote.dto.Revisiones_lc.RevisionLcListItemDto
+import com.opticeasy.app.data.remote.dto.auth.LoginResponseDto
 import com.opticeasy.app.data.remote.dto.auth.UsuarioDto
 import retrofit2.http.PUT
 import retrofit2.http.Query
@@ -54,7 +55,7 @@ interface OpticEasyApi {
     @POST("auth/login")
     suspend fun login(
         @Body request: LoginRequestDto
-    ): UsuarioDto
+    ): LoginResponseDto
 
     @GET("clientes/buscar")
     suspend fun buscarClientes(

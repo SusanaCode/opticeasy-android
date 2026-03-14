@@ -15,19 +15,23 @@ class SessionManager(private val context: Context) {
         private val KEY_NOMBRE = stringPreferencesKey("nombre_usuario")
         private val KEY_CODIGO_CENTRO = stringPreferencesKey("codigo_centro")
         private val KEY_ROL = stringPreferencesKey("rol")
+
+        private val KEY_TOKEN = stringPreferencesKey("token")
     }
 
     suspend fun saveUser(
         idUsuario: Long,
         nombre: String,
         codigoCentro: String,
-        rol: String
+        rol: String,
+        token: String
     ) {
         context.dataStore.edit { prefs ->
             prefs[KEY_ID_USUARIO] = idUsuario
             prefs[KEY_NOMBRE] = nombre
             prefs[KEY_CODIGO_CENTRO] = codigoCentro
             prefs[KEY_ROL] = rol
+            prefs[KEY_TOKEN] = token
         }
     }
 
@@ -39,6 +43,9 @@ class SessionManager(private val context: Context) {
 
     val rol: Flow<String?> =
         context.dataStore.data.map { it[KEY_ROL] }
+
+    val token: Flow<String?> =
+        context.dataStore.data.map { it[KEY_TOKEN] }
 
     suspend fun clear() {
         context.dataStore.edit { it.clear() }

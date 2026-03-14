@@ -1,6 +1,7 @@
 package com.opticeasy.app.viewmodel.clientes
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.opticeasy.app.data.remote.dto.clientes.ClienteCreateRequestDto
 import com.opticeasy.app.data.repository.ClientesRepository
@@ -17,8 +18,10 @@ sealed class ClientesUiState {
 }
 
 class ClientesViewModel(
-    private val repo: ClientesRepository = ClientesRepository()
-) : ViewModel() {
+    application: Application
+) : AndroidViewModel(application) {
+
+    private val repo = ClientesRepository(application.applicationContext)
 
     private val _state = MutableStateFlow<ClientesUiState>(ClientesUiState.Idle)
     val state: StateFlow<ClientesUiState> = _state
@@ -34,6 +37,7 @@ class ClientesViewModel(
                 val msg = when (e.code()) {
                     409 -> "El DNI ya existe"
                     400 -> "Nombre, apellidos y DNI son obligatorios"
+                    401 -> "Sesión no válida"
                     else -> "Error creando cliente (${e.code()})"
                 }
                 _state.value = ClientesUiState.Error(msg)

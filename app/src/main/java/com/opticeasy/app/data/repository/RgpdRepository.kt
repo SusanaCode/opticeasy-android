@@ -1,11 +1,17 @@
 package com.opticeasy.app.data.repository
 
+import android.content.Context
 import com.opticeasy.app.core.network.RetrofitClient
-import com.opticeasy.app.data.remote.dto.rgpd.FirmaRgpdRequestDto
 import com.opticeasy.app.data.remote.dto.common.OkResponseDto
+import com.opticeasy.app.data.remote.dto.rgpd.FirmaRgpdRequestDto
 
-class RgpdRepository {
+class RgpdRepository(
+    context: Context
+) {
+
+    private val api = RetrofitClient.getApi(context)
+
     suspend fun guardarFirma(clienteId: Int, req: FirmaRgpdRequestDto): OkResponseDto {
-        return RetrofitClient.api.crearFirmaRgpd(clienteId, req)
+        return api.crearFirmaRgpd(clienteId, req)
     }
 }

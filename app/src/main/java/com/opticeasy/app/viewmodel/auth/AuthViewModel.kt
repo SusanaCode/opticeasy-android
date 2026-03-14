@@ -22,7 +22,7 @@ class AuthViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val repo = AuthRepository()
+    private val repo = AuthRepository(application.applicationContext)
     private val sessionManager = SessionManager(application.applicationContext)
 
     private val _state = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
@@ -38,13 +38,15 @@ class AuthViewModel(
 
         viewModelScope.launch {
             try {
-                val usuario = repo.login(login.trim(), password)
+                val response = repo.login(login.trim(), password)
+                val usuario = response.user
 
                 sessionManager.saveUser(
                     idUsuario = usuario.idUsuario.toLong(),
                     nombre = "${usuario.nombreUsuario} ${usuario.apellidosUsuario}",
                     codigoCentro = usuario.codigoCentro,
-                    rol = usuario.rol
+                    rol = usuario.rol,
+                    token = response.token
                 )
 
                 _state.value = AuthUiState.Success(usuario)
@@ -101,7 +103,8 @@ class AuthViewModel(
                     idUsuario = usuario.idUsuario.toLong(),
                     nombre = "${usuario.nombreUsuario} ${usuario.apellidosUsuario}",
                     codigoCentro = usuario.codigoCentro,
-                    rol = usuario.rol
+                    rol = usuario.rol,
+                    token = ""
                 )
 
                 _state.value = AuthUiState.Success(usuario)

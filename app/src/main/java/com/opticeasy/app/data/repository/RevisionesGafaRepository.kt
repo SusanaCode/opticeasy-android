@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.first
 class RevisionesGafaRepository(
     context: Context
 ) {
-    private val api = RetrofitClient.api
+    private val api = RetrofitClient.getApi(context)
     private val sessionManager = SessionManager(context)
 
     suspend fun crearRevisionGafa(
@@ -22,7 +22,6 @@ class RevisionesGafaRepository(
         val idOptometrista = sessionManager.idUsuario.first()
             ?: throw IllegalStateException("No hay sesión iniciada (id_usuario null)")
 
-        // 🔒 Fuerza id_optometrista desde sesión (no depende de la UI)
         val finalRequest = request.copy(idOptometrista = idOptometrista)
 
         return api.crearRevisionGafa(clienteId, finalRequest)
@@ -32,4 +31,3 @@ class RevisionesGafaRepository(
         return api.listarRevisionesGafa(clienteId)
     }
 }
-

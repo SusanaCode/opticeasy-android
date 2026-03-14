@@ -8,16 +8,16 @@ import com.opticeasy.app.data.remote.dto.Revisiones_lc.RevisionLcCreateResponseD
 import com.opticeasy.app.data.remote.dto.Revisiones_lc.RevisionLcListItemDto
 import kotlinx.coroutines.flow.first
 
-class RevisionesLcRepository(context: Context) {
-
-    private val api = RetrofitClient.api
+class RevisionesLcRepository(
+    context: Context
+) {
+    private val api = RetrofitClient.getApi(context)
     private val sessionManager = SessionManager(context)
 
     suspend fun crearRevisionLc(
         clienteId: Long,
         request: RevisionLcCreateRequestDto
     ): RevisionLcCreateResponseDto {
-
 
         val idUsuario = sessionManager.idUsuario.first() ?: 0L
 
