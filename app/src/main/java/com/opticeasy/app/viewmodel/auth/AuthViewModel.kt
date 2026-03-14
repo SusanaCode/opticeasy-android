@@ -46,7 +46,8 @@ class AuthViewModel(
                     nombre = "${usuario.nombreUsuario} ${usuario.apellidosUsuario}",
                     codigoCentro = usuario.codigoCentro,
                     rol = usuario.rol,
-                    token = response.token
+                    token = response.token,
+                    adminUsuarios = usuario.adminUsuarios
                 )
 
                 _state.value = AuthUiState.Success(usuario)
@@ -104,7 +105,8 @@ class AuthViewModel(
                     nombre = "${usuario.nombreUsuario} ${usuario.apellidosUsuario}",
                     codigoCentro = usuario.codigoCentro,
                     rol = usuario.rol,
-                    token = ""
+                    token = "",
+                    adminUsuarios = usuario.adminUsuarios
                 )
 
                 _state.value = AuthUiState.Success(usuario)

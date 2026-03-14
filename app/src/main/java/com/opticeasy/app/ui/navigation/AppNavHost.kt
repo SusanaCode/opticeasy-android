@@ -4,12 +4,16 @@ package com.opticeasy.app.ui.navigation
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.opticeasy.app.data.local.SessionManager
 import com.opticeasy.app.ui.screens.auth.InicioScreen
 import com.opticeasy.app.ui.screens.auth.LoginScreen
 import com.opticeasy.app.ui.screens.auth.RegisterScreen
@@ -33,6 +37,10 @@ fun AppNavHost() {
 
     val navController = rememberNavController()
     val clientesBuscarViewModel: ClientesBuscarViewModel = viewModel()
+
+    val context = LocalContext.current
+    val sessionManager = SessionManager(context)
+    val adminUsuarios by sessionManager.adminUsuarios.collectAsState(initial = 0)
 
     NavHost(
         navController = navController,
@@ -85,18 +93,21 @@ fun AppNavHost() {
                     navController.navigate(Routes.CREAR_CLIENTE)
                 },
                 onConsultarCliente = {
-
                     clientesBuscarViewModel.reset()
                     navController.navigate(Routes.BUSCAR_CLIENTE)
                 },
                 onCalculadoraLC = {
                     navController.navigate(Routes.CALCULADORA_LC)
                 },
+                onCrearUsuario = {
+                    navController.navigate(Routes.REGISTRO)
+                },
                 onLogout = {
                     navController.navigate(Routes.LOGIN) {
                         popUpTo(Routes.MENU) { inclusive = true }
                     }
-                }
+                },
+                adminUsuarios = adminUsuarios
             )
         }
 

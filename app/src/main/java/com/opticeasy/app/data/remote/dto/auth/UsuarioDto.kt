@@ -11,5 +11,6 @@ data class UsuarioDto(
     @SerializedName("numero_colegiado") val numeroColegiado: Int?,
     @SerializedName("codigo_centro") val codigoCentro: String,
     val rol: String,
-    val activo: Int
+    val activo: Int,
+    @SerializedName("admin_usuarios") val adminUsuarios: Int
 )

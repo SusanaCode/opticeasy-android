@@ -15,7 +15,9 @@ fun MenuScreen(
     onCrearCliente: () -> Unit,
     onConsultarCliente: () -> Unit,
     onCalculadoraLC: () -> Unit,
-    onLogout: () -> Unit
+    onCrearUsuario: () -> Unit,
+    onLogout: () -> Unit,
+    adminUsuarios: Int
 ) {
     val green = MaterialTheme.colorScheme.primary
     val shape16 = RoundedCornerShape(16.dp)
@@ -74,6 +76,15 @@ fun MenuScreen(
                     text = "Usar calculadora LC",
                     onClick = onCalculadoraLC
                 )
+
+                if (adminUsuarios == 1) {
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    MenuButton(
+                        text = "Crear nuevo usuario",
+                        onClick = onCrearUsuario
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(32.dp))
 
