@@ -121,6 +121,9 @@ fun GestionUsuariosScreen(
                                 activo = usuario.activo,
                                 onCambiarPassword = { nuevaPass ->
                                     vm.cambiarPassword(usuario.idUsuario, nuevaPass)
+                                },
+                                onCambiarActivo = {
+                                    vm.cambiarActivo(usuario.idUsuario, usuario.activo)
                                 }
                             )
 
@@ -168,7 +171,8 @@ private fun UsuarioCard(
     nick: String,
     rol: String,
     activo: Int,
-    onCambiarPassword: (String) -> Unit
+    onCambiarPassword: (String) -> Unit,
+    onCambiarActivo: () -> Unit
 ) {
     var nuevaPassword by remember { mutableStateOf("") }
 
@@ -220,6 +224,16 @@ private fun UsuarioCard(
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text("Cambiar contraseña")
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = onCambiarActivo,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(if (activo == 1) "Desactivar usuario" else "Activar usuario")
             }
         }
     }

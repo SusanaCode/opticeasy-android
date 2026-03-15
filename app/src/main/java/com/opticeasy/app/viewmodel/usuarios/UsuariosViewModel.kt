@@ -59,5 +59,23 @@ class UsuariosViewModel(application: Application) : AndroidViewModel(application
     fun limpiarMensaje() {
         _mensaje.value = null
     }
+
+    fun cambiarActivo(idUsuario: Int, activoActual: Int) {
+        val nuevoActivo = if (activoActual == 1) 0 else 1
+
+        viewModelScope.launch {
+            try {
+                repository.cambiarActivoUsuario(idUsuario, nuevoActivo)
+                _mensaje.value = if (nuevoActivo == 1) {
+                    "Usuario activado correctamente"
+                } else {
+                    "Usuario desactivado correctamente"
+                }
+                cargarUsuarios()
+            } catch (e: Exception) {
+                _mensaje.value = e.message ?: "Error cambiando el estado del usuario"
+            }
+        }
+    }
 }
 

@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,7 +54,6 @@ fun LoginScreen(
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
         ) {
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -126,7 +126,23 @@ fun LoginScreen(
                     )
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+
+                if (state is AuthUiState.Error) {
+                    Text(
+                        text = (state as AuthUiState.Error).message,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+
+                if (state is AuthUiState.Loading) {
+                    CircularProgressIndicator()
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
 
                 Button(
                     onClick = { vm.login(login, password) },
@@ -137,7 +153,8 @@ fun LoginScreen(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = OpticPrimary,
                         contentColor = OpticOnPrimary
-                    )
+                    ),
+                    enabled = state !is AuthUiState.Loading
                 ) {
                     Text("Enviar")
                 }

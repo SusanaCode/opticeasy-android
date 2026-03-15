@@ -24,6 +24,7 @@ import com.opticeasy.app.data.remote.dto.usuarios.CambiarPasswordRequestDto
 import retrofit2.http.PATCH
 import retrofit2.http.PUT
 import retrofit2.http.Query
+import com.opticeasy.app.data.remote.dto.usuarios.CambiarActivoRequestDto
 
 
 interface OpticEasyApi {
@@ -101,6 +102,12 @@ interface OpticEasyApi {
         @Path("id") id: Int,
         @Body body: CambiarPasswordRequestDto
     ): OkResponseDto
+
+    @PATCH("usuarios/{id}/activo")
+    suspend fun cambiarActivoUsuario(
+        @Path("id") id: Int,
+        @Body body: CambiarActivoRequestDto
+    ): UsuarioDto
 }
 
 
