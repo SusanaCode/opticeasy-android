@@ -32,6 +32,8 @@ fun GestionUsuariosScreen(
     val uiState by vm.uiState.collectAsState()
     val mensaje by vm.mensaje.collectAsState()
 
+    var searchText by remember { mutableStateOf("") }
+
     LaunchedEffect(Unit) {
         vm.cargarUsuarios()
     }
@@ -61,6 +63,19 @@ fun GestionUsuariosScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
+            OutlinedTextField(
+                value = searchText,
+                onValueChange = { searchText = it },
+                label = { Text("Buscar por nick, nombre o apellidos") },
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.White,
+                    focusedContainerColor = Color.White
+                )
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
             when (val state = uiState) {
                 is UsuariosUiState.Idle -> {
                     Text("Preparando datos...")
@@ -78,20 +93,39 @@ fun GestionUsuariosScreen(
                 }
 
                 is UsuariosUiState.Success -> {
-                    state.usuarios.forEach { usuario ->
-                        UsuarioCard(
-                            idUsuario = usuario.idUsuario,
-                            nombre = usuario.nombreUsuario,
-                            apellidos = usuario.apellidosUsuario,
-                            nick = usuario.nickUsuario,
-                            rol = usuario.rol,
-                            activo = usuario.activo,
-                            onCambiarPassword = { nuevaPass ->
-                                vm.cambiarPassword(usuario.idUsuario, nuevaPass)
-                            }
-                        )
+                    val textoBusqueda = searchText.trim().lowercase()
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                    val usuariosFiltrados = state.usuarios.filter { usuario ->
+                        val nombre = usuario.nombreUsuario.lowercase()
+                        val apellidos = usuario.apellidosUsuario.lowercase()
+                        val nick = usuario.nickUsuario.lowercase()
+                        val nombreCompleto = "$nombre $apellidos"
+
+                        textoBusqueda.isBlank() ||
+                                nick.contains(textoBusqueda) ||
+                                nombre.contains(textoBusqueda) ||
+                                apellidos.contains(textoBusqueda) ||
+                                nombreCompleto.contains(textoBusqueda)
+                    }
+
+                    if (usuariosFiltrados.isEmpty()) {
+                        Text("No se encontraron usuarios.")
+                    } else {
+                        usuariosFiltrados.forEach { usuario ->
+                            UsuarioCard(
+                                idUsuario = usuario.idUsuario,
+                                nombre = usuario.nombreUsuario,
+                                apellidos = usuario.apellidosUsuario,
+                                nick = usuario.nickUsuario,
+                                rol = usuario.rol,
+                                activo = usuario.activo,
+                                onCambiarPassword = { nuevaPass ->
+                                    vm.cambiarPassword(usuario.idUsuario, nuevaPass)
+                                }
+                            )
+
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
                     }
                 }
             }
@@ -145,7 +179,7 @@ private fun UsuarioCard(
             containerColor = OpticCardBg
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -161,7 +195,9 @@ private fun UsuarioCard(
             Text(text = "ID: $idUsuario")
             Text(text = "Nick: $nick")
             Text(text = "Rol: $rol")
-            Text(text = "Activo: $activo")
+            Text(
+                text = if (activo == 1) "Estado: Activo" else "Estado: Inactivo"
+            )
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -169,8 +205,7 @@ private fun UsuarioCard(
                 value = nuevaPassword,
                 onValueChange = { nuevaPassword = it },
                 label = { Text("Nueva contraseña") },
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedContainerColor = Color.White,
                     focusedContainerColor = Color.White
