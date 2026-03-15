@@ -16,6 +16,7 @@ fun MenuScreen(
     onConsultarCliente: () -> Unit,
     onCalculadoraLC: () -> Unit,
     onCrearUsuario: () -> Unit,
+    onGestionUsuarios: () -> Unit,
     onLogout: () -> Unit,
     adminUsuarios: Int
 ) {
@@ -84,6 +85,13 @@ fun MenuScreen(
                         text = "Crear nuevo usuario",
                         onClick = onCrearUsuario
                     )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    MenuButton(
+                        text = "Gestión de usuarios",
+                        onClick = onGestionUsuarios
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -119,4 +127,3 @@ private fun MenuButton(
         Text(text)
     }
 }
-

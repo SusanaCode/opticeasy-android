@@ -25,6 +25,8 @@ object Routes {
 
     const val PDF_VIEWER = "pdf_viewer"
 
+    const val GESTION_USUARIOS = "gestion_usuarios"
+
 }
 
 

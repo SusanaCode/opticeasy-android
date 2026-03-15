@@ -20,6 +20,8 @@ import com.opticeasy.app.data.remote.dto.Revisiones_lc.RevisionLcCreateResponseD
 import com.opticeasy.app.data.remote.dto.Revisiones_lc.RevisionLcListItemDto
 import com.opticeasy.app.data.remote.dto.auth.LoginResponseDto
 import com.opticeasy.app.data.remote.dto.auth.UsuarioDto
+import com.opticeasy.app.data.remote.dto.usuarios.CambiarPasswordRequestDto
+import retrofit2.http.PATCH
 import retrofit2.http.PUT
 import retrofit2.http.Query
 
@@ -90,6 +92,15 @@ interface OpticEasyApi {
     suspend fun listarRevisionesLc(
         @Path("id") clienteId: Long
     ): List<RevisionLcListItemDto>
+
+    @GET("usuarios")
+    suspend fun listarUsuarios(): List<UsuarioDto>
+
+    @PATCH("usuarios/{id}/password")
+    suspend fun cambiarPasswordUsuario(
+        @Path("id") id: Int,
+        @Body body: CambiarPasswordRequestDto
+    ): OkResponseDto
 }
 
 

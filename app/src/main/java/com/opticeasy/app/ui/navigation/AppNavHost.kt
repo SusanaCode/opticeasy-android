@@ -29,6 +29,7 @@ import com.opticeasy.app.ui.screens.revisiones.lc.NuevaRevisionLcScreen
 import com.opticeasy.app.ui.screens.revisiones.pdf.PdfViewerScreen
 import com.opticeasy.app.ui.screens.rgpd.FirmaRgpdScreen
 import com.opticeasy.app.ui.screens.splash.SplashScreen
+import com.opticeasy.app.ui.screens.usuarios.GestionUsuariosScreen
 import com.opticeasy.app.viewmodel.clientes.ClientesBuscarViewModel
 import com.opticeasy.app.viewmodel.revisiones.gafa.NuevaRevisionGafaViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -105,6 +106,9 @@ fun AppNavHost() {
                 onCrearUsuario = {
                     navController.navigate(Routes.REGISTRO)
                 },
+                onGestionUsuarios = {
+                    navController.navigate(Routes.GESTION_USUARIOS)
+                },
                 onLogout = {
                     CoroutineScope(Dispatchers.Main).launch {
                         sessionManager.clear()
@@ -115,6 +119,12 @@ fun AppNavHost() {
                     }
                 },
                 adminUsuarios = adminUsuarios
+            )
+        }
+
+        composable(Routes.GESTION_USUARIOS) {
+            GestionUsuariosScreen(
+                onBack = { navController.popBackStack() }
             )
         }
 
