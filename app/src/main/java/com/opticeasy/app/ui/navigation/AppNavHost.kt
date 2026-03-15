@@ -31,6 +31,9 @@ import com.opticeasy.app.ui.screens.rgpd.FirmaRgpdScreen
 import com.opticeasy.app.ui.screens.splash.SplashScreen
 import com.opticeasy.app.viewmodel.clientes.ClientesBuscarViewModel
 import com.opticeasy.app.viewmodel.revisiones.gafa.NuevaRevisionGafaViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun AppNavHost() {
@@ -103,8 +106,12 @@ fun AppNavHost() {
                     navController.navigate(Routes.REGISTRO)
                 },
                 onLogout = {
-                    navController.navigate(Routes.LOGIN) {
-                        popUpTo(Routes.MENU) { inclusive = true }
+                    CoroutineScope(Dispatchers.Main).launch {
+                        sessionManager.clear()
+                        navController.navigate(Routes.LOGIN) {
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
+                        }
                     }
                 },
                 adminUsuarios = adminUsuarios
