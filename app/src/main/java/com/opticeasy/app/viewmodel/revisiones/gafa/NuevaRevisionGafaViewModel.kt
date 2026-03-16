@@ -23,9 +23,8 @@ class NuevaRevisionGafaViewModel(application: Application) : AndroidViewModel(ap
     )
     val state: StateFlow<RevisionGafaFormState> = _state
 
-
     fun init(clienteId: Long, nombre: String, apellidos: String, codigoCliente: String) {
-        if (_state.value.clienteId != 0L) return // evita reinit
+        if (_state.value.clienteId != 0L) return
         _state.value = _state.value.copy(
             clienteId = clienteId,
             nombre = nombre,
@@ -57,7 +56,7 @@ class NuevaRevisionGafaViewModel(application: Application) : AndroidViewModel(ap
 
         viewModelScope.launch {
             try {
-                // El repo se encarga de meter id_optometrista desde SessionManager
+                // El backend toma id_optometrista desde el token
                 repo.crearRevisionGafa(
                     clienteId = s.clienteId,
                     request = s.toCreateRequestDto()
@@ -74,16 +73,12 @@ class NuevaRevisionGafaViewModel(application: Application) : AndroidViewModel(ap
     }
 }
 
-
 private fun RevisionGafaFormState.toCreateRequestDto(): RevisionGafaCreateRequestDto {
     fun String.toD(): Double? = trim().replace(",", ".").toDoubleOrNull()
     fun String.toI(): Int? = trim().toIntOrNull()
     fun String.toNullable(): String? = trim().ifBlank { null }
 
     return RevisionGafaCreateRequestDto(
-        // dummy: el repo lo sobrescribe con SessionManager
-        idOptometrista = 0L,
-
         fechaRevision = fechaRevision.toNullable(),
         anamnesis = anamnesis.toNullable(),
         otrasPruebas = otrasPruebas.toNullable(),

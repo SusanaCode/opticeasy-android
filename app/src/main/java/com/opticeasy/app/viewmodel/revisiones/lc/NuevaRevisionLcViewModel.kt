@@ -14,7 +14,6 @@ import java.time.LocalDate
 
 class NuevaRevisionLcViewModel(application: Application) : AndroidViewModel(application) {
 
-
     private val repo = RevisionesLcRepository(application.applicationContext)
 
     private val _state = MutableStateFlow(RevisionLcFormState())
@@ -24,9 +23,7 @@ class NuevaRevisionLcViewModel(application: Application) : AndroidViewModel(appl
         clienteId: Long,
         nombre: String,
         apellidos: String,
-
     ) {
-
         val hoy = LocalDate.now()
         val hoyBackend = hoy.toString() // YYYY-MM-DD
 
@@ -38,22 +35,24 @@ class NuevaRevisionLcViewModel(application: Application) : AndroidViewModel(appl
         )
     }
 
-
     fun updateFechaRevision(v: String) = _state.update { it.copy(fechaRevision = v) }
     fun updateAnamnesis(v: String) = _state.update { it.copy(anamnesis = v) }
     fun updateOtrasPruebas(v: String) = _state.update { it.copy(otrasPruebas = v) }
+
     // OD
     fun updateEsferaOd(v: Double?) = _state.update { it.copy(esferaOd = v) }
     fun updateCilindroOd(v: Double?) = _state.update { it.copy(cilindroOd = v) }
     fun updateEjeOd(v: Int?) = _state.update { it.copy(ejeOd = v) }
     fun updateAvOd(v: Double?) = _state.update { it.copy(avOd = v) }
     fun updateAddOd(v: Double?) = _state.update { it.copy(addOd = v) }
+
     fun updateDominanteOd(value: Boolean) {
         _state.value = _state.value.copy(
             dominanteOd = value,
             dominanteOi = if (value) false else _state.value.dominanteOi
         )
     }
+
     fun updateTipoLenteOd(v: String) = _state.update { it.copy(tipoLenteOd = v) }
 
     // OI
@@ -62,9 +61,11 @@ class NuevaRevisionLcViewModel(application: Application) : AndroidViewModel(appl
     fun updateEjeOi(v: Int?) = _state.update { it.copy(ejeOi = v) }
     fun updateAvOi(v: Double?) = _state.update { it.copy(avOi = v) }
     fun updateAddOi(v: Double?) = _state.update { it.copy(addOi = v) }
+
     fun updateTipoLenteOi(value: String) {
         _state.value = _state.value.copy(tipoLenteOi = value)
     }
+
     fun updateDominanteOi(value: Boolean) {
         _state.value = _state.value.copy(
             dominanteOi = value,
@@ -87,7 +88,6 @@ class NuevaRevisionLcViewModel(application: Application) : AndroidViewModel(appl
         viewModelScope.launch {
             try {
                 val body = RevisionLcCreateRequestDto(
-                    id_optometrista = 0L, // lo mete el repo desde SessionManager
                     fecha_revision = s.fechaRevision,
 
                     anamnesis = s.anamnesis.ifBlank { null },

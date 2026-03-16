@@ -3,9 +3,6 @@ package com.opticeasy.app.data.remote.dto.revisiones_gafa
 import com.google.gson.annotations.SerializedName
 
 data class RevisionGafaCreateRequestDto(
-    // obligatorio en backend (viene de sesión)
-    @SerializedName("id_optometrista") val idOptometrista: Long,
-
     // opcional: si no mandas, backend pone hoy
     @SerializedName("fecha_revision") val fechaRevision: String? = null,
 
@@ -28,7 +25,7 @@ data class RevisionGafaCreateRequestDto(
     @SerializedName("ccf_od") val ccfOd: Double? = null,
     @SerializedName("arn_od") val arnOd: Double? = null,
     @SerializedName("arp_od") val arpOd: Double? = null,
-    @SerializedName("dominante_od") val dominanteOd: Int = 0, // 0/1
+    @SerializedName("dominante_od") val dominanteOd: Int = 0,
 
     // --- USADA OI
     @SerializedName("esfera_usada_oi") val esferaUsadaOi: Double? = null,
@@ -46,5 +43,5 @@ data class RevisionGafaCreateRequestDto(
     @SerializedName("ccf_oi") val ccfOi: Double? = null,
     @SerializedName("arn_oi") val arnOi: Double? = null,
     @SerializedName("arp_oi") val arpOi: Double? = null,
-    @SerializedName("dominante_oi") val dominanteOi: Int = 0 // 0/1
+    @SerializedName("dominante_oi") val dominanteOi: Int = 0
 )

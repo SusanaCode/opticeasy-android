@@ -1,8 +1,6 @@
 package com.opticeasy.app.data.remote.dto.Revisiones_lc
 
 data class RevisionLcCreateRequestDto(
-    val id_optometrista: Long,
-
     val fecha_revision: String, // "YYYY-MM-DD"
 
     val anamnesis: String? = null,
@@ -14,7 +12,7 @@ data class RevisionLcCreateRequestDto(
     val eje_od: Int? = null,
     val av_od: Double? = null,
     val add_od: Double? = null,
-    val dominante_od: Int? = 0,      // backend usa 0/1
+    val dominante_od: Int? = 0,
     val tipo_lente_od: String? = null,
 
     // OI
@@ -23,6 +21,6 @@ data class RevisionLcCreateRequestDto(
     val eje_oi: Int? = null,
     val av_oi: Double? = null,
     val add_oi: Double? = null,
-    val dominante_oi: Int? = 0,      // backend usa 0/1
+    val dominante_oi: Int? = 0,
     val tipo_lente_oi: String? = null
 )
