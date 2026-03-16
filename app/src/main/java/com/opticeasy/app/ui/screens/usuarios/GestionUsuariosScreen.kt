@@ -1,5 +1,6 @@
 package com.opticeasy.app.ui.screens.usuarios
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -7,16 +8,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.opticeasy.app.ui.components.BaseScreen
@@ -24,11 +26,17 @@ import com.opticeasy.app.ui.theme.OpticCardBg
 import com.opticeasy.app.viewmodel.usuarios.UsuariosUiState
 import com.opticeasy.app.viewmodel.usuarios.UsuariosViewModel
 
+private fun esPasswordValida(password: String): Boolean {
+    val regex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$")
+    return regex.matches(password)
+}
+
 @Composable
 fun GestionUsuariosScreen(
     onBack: () -> Unit,
     vm: UsuariosViewModel = viewModel()
 ) {
+    val context = LocalContext.current
     val uiState by vm.uiState.collectAsState()
     val mensaje by vm.mensaje.collectAsState()
 
@@ -36,6 +44,12 @@ fun GestionUsuariosScreen(
 
     LaunchedEffect(Unit) {
         vm.cargarUsuarios()
+    }
+
+    LaunchedEffect(mensaje) {
+        mensaje?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+        }
     }
 
     BaseScreen(contentTopPadding = 0.dp) {
@@ -124,6 +138,9 @@ fun GestionUsuariosScreen(
                                 },
                                 onCambiarActivo = {
                                     vm.cambiarActivo(usuario.idUsuario, usuario.activo)
+                                },
+                                onLimpiarMensaje = {
+                                    vm.limpiarMensaje()
                                 }
                             )
 
@@ -172,8 +189,10 @@ private fun UsuarioCard(
     rol: String,
     activo: Int,
     onCambiarPassword: (String) -> Unit,
-    onCambiarActivo: () -> Unit
+    onCambiarActivo: () -> Unit,
+    onLimpiarMensaje: () -> Unit
 ) {
+    val context = LocalContext.current
     var nuevaPassword by remember { mutableStateOf("") }
 
     Card(
@@ -216,10 +235,34 @@ private fun UsuarioCard(
                 )
             )
 
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth()
+            )
+
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(
-                onClick = { onCambiarPassword(nuevaPassword) },
+                onClick = {
+                    val passwordLimpia = nuevaPassword.trim()
+
+                    if (!esPasswordValida(passwordLimpia)) {
+                        Toast.makeText(
+                            context,
+                            "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        return@Button
+                    }
+
+                    onLimpiarMensaje()
+                    onCambiarPassword(passwordLimpia)
+                    nuevaPassword = ""
+                },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
             ) {
@@ -238,4 +281,3 @@ private fun UsuarioCard(
         }
     }
 }
-

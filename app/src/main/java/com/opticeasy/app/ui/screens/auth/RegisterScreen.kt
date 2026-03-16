@@ -26,6 +26,11 @@ import com.opticeasy.app.ui.theme.OpticPrimary
 import com.opticeasy.app.viewmodel.auth.AuthUiState
 import com.opticeasy.app.viewmodel.auth.AuthViewModel
 
+
+private fun esPasswordValida(password: String): Boolean {
+    val regex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$")
+    return regex.matches(password)
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
@@ -225,6 +230,15 @@ fun RegisterScreen(
                     colors = coloresCampo()
                 )
 
+                Text(
+                    text = "Debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp)
+                )
+
                 Spacer(modifier = Modifier.height(24.dp))
 
                 OutlinedButton(
@@ -250,12 +264,23 @@ fun RegisterScreen(
 
                 Button(
                     onClick = {
+                        val passwordLimpia = password.trim()
+
+                        if (!esPasswordValida(passwordLimpia)) {
+                            Toast.makeText(
+                                context,
+                                "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            return@Button
+                        }
+
                         vm.register(
                             nombreUsuario = nombre.trim(),
                             apellidosUsuario = apellidos.trim(),
                             nickUsuario = nick.trim(),
                             email = email.trim(),
-                            password = password,
+                            password = passwordLimpia,
                             codigoCentro = codigoCentro.trim(),
                             rol = rol,
                             numeroColegiado = numeroColegiado.ifBlank { null }
