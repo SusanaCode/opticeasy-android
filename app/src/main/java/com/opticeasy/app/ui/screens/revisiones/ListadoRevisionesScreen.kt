@@ -86,7 +86,7 @@ fun ListadoRevisionesScreen(
                 is RevisionesListadoState.Error -> {
                     Text(s.message, color = MaterialTheme.colorScheme.error)
                     Spacer(Modifier.height(10.dp))
-                    Button(onClick = onBack) { Text("Atrás") }
+                    Button(onClick = onBack) { Text("Volver al cliente") }
                 }
 
                 is RevisionesListadoState.Success -> {
