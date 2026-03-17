@@ -23,6 +23,7 @@ import com.opticeasy.app.ui.screens.clientes.ClientesScreen
 import com.opticeasy.app.ui.screens.clientes.ListadoClientesScreen
 import com.opticeasy.app.ui.screens.menu.MenuScreen
 import com.opticeasy.app.ui.screens.revisiones.ListadoRevisionesScreen
+import com.opticeasy.app.ui.screens.revisiones.gafa.DetalleRevisionGafaScreen
 import com.opticeasy.app.ui.screens.revisiones.gafa.NuevaRevisionGafaScreen
 import com.opticeasy.app.ui.screens.revisiones.lc.NuevaRevisionLcScreen
 import com.opticeasy.app.ui.screens.revisiones.pdf.PdfViewerScreen
@@ -282,6 +283,9 @@ fun AppNavHost() {
                     navController.navigate(
                         "${Routes.PDF_VIEWER}/${Uri.encode(pdfPath)}/${Uri.encode(titulo)}"
                     )
+                },
+                onAbrirDetalleGafa = { revisionId ->
+                    navController.navigate("${Routes.DETALLE_REVISION_GAFA}/$revisionId")
                 }
             )
         }
@@ -301,6 +305,21 @@ fun AppNavHost() {
                 pdfPath = Uri.decode(pdfPath),
                 titulo = Uri.decode(titulo),
                 onBack = { navController.popBackStack() }
+            )
+        }
+
+
+        composable(
+            route = "${Routes.DETALLE_REVISION_GAFA}/{revisionId}",
+            arguments = listOf(
+                navArgument("revisionId") { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+            val revisionId = backStackEntry.arguments?.getLong("revisionId") ?: 0L
+
+            DetalleRevisionGafaScreen(
+                idRevision = revisionId,
+                onVolver = { navController.popBackStack() }
             )
         }
     }

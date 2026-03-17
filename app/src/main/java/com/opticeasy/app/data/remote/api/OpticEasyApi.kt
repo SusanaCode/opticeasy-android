@@ -17,9 +17,11 @@ import com.opticeasy.app.data.remote.dto.revisiones_gafa.RevisionGafaCreateRespo
 import com.opticeasy.app.data.remote.dto.revisiones_gafa.RevisionGafaListItemDto
 import com.opticeasy.app.data.remote.dto.Revisiones_lc.RevisionLcCreateRequestDto
 import com.opticeasy.app.data.remote.dto.Revisiones_lc.RevisionLcCreateResponseDto
+import com.opticeasy.app.data.remote.dto.Revisiones_lc.RevisionLcDetalleDto
 import com.opticeasy.app.data.remote.dto.Revisiones_lc.RevisionLcListItemDto
 import com.opticeasy.app.data.remote.dto.auth.LoginResponseDto
 import com.opticeasy.app.data.remote.dto.auth.UsuarioDto
+import com.opticeasy.app.data.remote.dto.revisiones_gafa.RevisionGafaDetalleDto
 import com.opticeasy.app.data.remote.dto.usuarios.CambiarPasswordRequestDto
 import retrofit2.http.PATCH
 import retrofit2.http.PUT
@@ -108,6 +110,16 @@ interface OpticEasyApi {
         @Path("id") id: Int,
         @Body body: CambiarActivoRequestDto
     ): UsuarioDto
+
+    @GET("revisiones-gafa/{id}")
+    suspend fun obtenerRevisionGafaPorId(
+        @Path("id") id: Long
+    ): RevisionGafaDetalleDto
+
+    @GET("revision-lc/{id}")
+    suspend fun obtenerRevisionLcPorId(
+        @Path("id") id: Long
+    ): RevisionLcDetalleDto
 }
 
 

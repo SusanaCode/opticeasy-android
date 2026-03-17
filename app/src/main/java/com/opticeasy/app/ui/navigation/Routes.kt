@@ -27,6 +27,8 @@ object Routes {
 
     const val GESTION_USUARIOS = "gestion_usuarios"
 
+    const val DETALLE_REVISION_GAFA = "detalle_revision_gafa"
+
 }
 
 

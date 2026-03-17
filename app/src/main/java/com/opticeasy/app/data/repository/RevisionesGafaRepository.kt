@@ -4,6 +4,7 @@ import android.content.Context
 import com.opticeasy.app.core.network.RetrofitClient
 import com.opticeasy.app.data.remote.dto.revisiones_gafa.RevisionGafaCreateRequestDto
 import com.opticeasy.app.data.remote.dto.revisiones_gafa.RevisionGafaCreateResponseDto
+import com.opticeasy.app.data.remote.dto.revisiones_gafa.RevisionGafaDetalleDto
 import com.opticeasy.app.data.remote.dto.revisiones_gafa.RevisionGafaListItemDto
 
 class RevisionesGafaRepository(
@@ -20,5 +21,9 @@ class RevisionesGafaRepository(
 
     suspend fun listarRevisionesGafa(clienteId: Long): List<RevisionGafaListItemDto> {
         return api.listarRevisionesGafa(clienteId)
+    }
+
+    suspend fun obtenerRevisionGafaPorId(id: Long): RevisionGafaDetalleDto {
+        return api.obtenerRevisionGafaPorId(id)
     }
 }

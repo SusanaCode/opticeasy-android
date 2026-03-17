@@ -28,7 +28,8 @@ fun ListadoRevisionesScreen(
     clienteId: Long,
     onBack: () -> Unit,
     onIrCliente: () -> Unit,
-    onAbrirPdf: (String, String) -> Unit
+    onAbrirPdf: (String, String) -> Unit,
+    onAbrirDetalleGafa: (Long) -> Unit
 ) {
     val vm: RevisionesListadoViewModel = viewModel()
     val state by vm.state.collectAsState()
@@ -104,7 +105,8 @@ fun ListadoRevisionesScreen(
                         clienteId = clienteId,
                         nombre = cliente.nombre,
                         apellidos = cliente.apellidos,
-                        onAbrirPdf = onAbrirPdf
+                        onAbrirPdf = onAbrirPdf,
+                        onAbrirDetalleGafa = onAbrirDetalleGafa
                     )
 
                     Spacer(Modifier.height(18.dp))
@@ -138,13 +140,15 @@ fun ListadoRevisionesScreen(
 }
 
 @Composable
+
 private fun SeccionGafa(
     items: List<RevisionGafaListItemDto>,
     context: Context,
     clienteId: Long,
     nombre: String,
     apellidos: String,
-    onAbrirPdf: (String, String) -> Unit
+    onAbrirPdf: (String, String) -> Unit,
+    onAbrirDetalleGafa: (Long) -> Unit
 ) {
     Text("REVISIONES PARA GAFA", style = MaterialTheme.typography.titleSmall)
     Divider(
@@ -194,9 +198,8 @@ private fun SeccionGafa(
                 onAbrirPdf(file.absolutePath, "Informe de revisión - Gafa")
             },
 
-            // 👉 CLICK CENTRO → DETALLE (de momento log/placeholder)
             onClickDetalle = {
-                println("Abrir detalle revisión Gafa ID: ${item.id_revision_gafa}")
+                onAbrirDetalleGafa(item.id_revision_gafa.toLong())
             }
         )
         Spacer(Modifier.height(10.dp))
