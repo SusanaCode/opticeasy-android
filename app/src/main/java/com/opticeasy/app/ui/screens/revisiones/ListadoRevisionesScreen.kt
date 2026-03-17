@@ -85,7 +85,7 @@ fun ListadoRevisionesScreen(
 
                 is RevisionesListadoState.Error -> {
                     Text(
-                        text = s.message,
+                        text = "No se pudieron cargar las revisiones.",
                         color = MaterialTheme.colorScheme.error
                     )
                     Spacer(Modifier.height(10.dp))

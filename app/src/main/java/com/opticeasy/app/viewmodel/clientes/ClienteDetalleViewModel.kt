@@ -29,25 +29,29 @@ class ClienteDetalleViewModel(
 
     fun cargar(idCliente: Int) {
         viewModelScope.launch {
+            _state.value = ClienteDetalleState.Loading
             try {
-                _state.value = ClienteDetalleState.Loading
                 val cliente = repo.obtenerClientePorId(idCliente)
                 _state.value = ClienteDetalleState.Success(cliente)
-            } catch (e: Exception) {
-                _state.value = ClienteDetalleState.Error(e.message ?: "Error cargando cliente")
+            } catch (_: Exception) {
+                _state.value = ClienteDetalleState.Error(
+                    "No se pudo cargar el cliente. Inténtalo de nuevo."
+                )
             }
         }
     }
 
     fun guardar(idCliente: Int, req: ClienteUpdateRequestDto) {
         viewModelScope.launch {
+            _state.value = ClienteDetalleState.Loading
             try {
-                _state.value = ClienteDetalleState.Loading
                 repo.actualizarCliente(idCliente, req)
                 val cliente = repo.obtenerClientePorId(idCliente)
                 _state.value = ClienteDetalleState.Success(cliente)
-            } catch (e: Exception) {
-                _state.value = ClienteDetalleState.Error(e.message ?: "Error guardando cliente")
+            } catch (_: Exception) {
+                _state.value = ClienteDetalleState.Error(
+                    "No se pudo guardar la ficha del cliente. Inténtalo de nuevo."
+                )
             }
         }
     }

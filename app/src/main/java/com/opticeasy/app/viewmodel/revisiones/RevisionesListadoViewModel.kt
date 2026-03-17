@@ -3,8 +3,8 @@ package com.opticeasy.app.viewmodel.revisiones
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.opticeasy.app.data.remote.dto.revisiones_gafa.RevisionGafaListItemDto
 import com.opticeasy.app.data.remote.dto.Revisiones_lc.RevisionLcListItemDto
+import com.opticeasy.app.data.remote.dto.revisiones_gafa.RevisionGafaListItemDto
 import com.opticeasy.app.data.repository.RevisionesGafaRepository
 import com.opticeasy.app.data.repository.RevisionesLcRepository
 import kotlinx.coroutines.async
@@ -33,9 +33,8 @@ class RevisionesListadoViewModel(application: Application) : AndroidViewModel(ap
 
     fun cargar(clienteId: Long) {
         viewModelScope.launch {
+            _state.value = RevisionesListadoState.Loading
             try {
-                _state.value = RevisionesListadoState.Loading
-
                 val gafaDef = async { repoGafa.listarRevisionesGafa(clienteId) }
                 val lcDef = async { repoLc.listarRevisionesLc(clienteId) }
 
@@ -43,9 +42,9 @@ class RevisionesListadoViewModel(application: Application) : AndroidViewModel(ap
                     revisionesGafa = gafaDef.await(),
                     revisionesLc = lcDef.await()
                 )
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 _state.value = RevisionesListadoState.Error(
-                    e.message ?: "Error cargando revisiones"
+                    "No se pudieron cargar las revisiones. Inténtalo de nuevo."
                 )
             }
         }
