@@ -1,6 +1,7 @@
 package com.opticeasy.app.ui.screens.revisiones
 
 import android.content.Context
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -163,7 +164,9 @@ private fun SeccionGafa(
             od = "ESF ${item.esfera_od ?: "—"}  CIL ${item.cilindro_od ?: "—"}  EJE ${item.eje_od?.toString() ?: "—"}  AV ${item.av_od ?: "—"}  ADD ${item.add_od ?: "—"}",
             oi = "ESF ${item.esfera_oi ?: "—"}  CIL ${item.cilindro_oi ?: "—"}  EJE ${item.eje_oi?.toString() ?: "—"}  AV ${item.av_oi ?: "—"}  ADD ${item.add_oi ?: "—"}",
             optometrista = item.optometrista,
-            onClick = {
+
+            // 👉 CLICK FECHA → PDF
+            onClickPdf = {
                 val file = PdfRevisionesUtils.generarPdfRevisionGafa(
                     context = context,
                     nombre = nombre,
@@ -189,6 +192,11 @@ private fun SeccionGafa(
                 )
 
                 onAbrirPdf(file.absolutePath, "Informe de revisión - Gafa")
+            },
+
+            // 👉 CLICK CENTRO → DETALLE (de momento log/placeholder)
+            onClickDetalle = {
+                println("Abrir detalle revisión Gafa ID: ${item.id_revision_gafa}")
             }
         )
         Spacer(Modifier.height(10.dp))
@@ -222,7 +230,8 @@ private fun SeccionLc(
             od = "ESF ${item.esfera_od ?: "—"}  CIL ${item.cilindro_od ?: "—"}  EJE ${item.eje_od?.toString() ?: "—"}  AV ${item.av_od ?: "—"}  ADD ${item.add_od ?: "—"}",
             oi = "ESF ${item.esfera_oi ?: "—"}  CIL ${item.cilindro_oi ?: "—"}  EJE ${item.eje_oi?.toString() ?: "—"}  AV ${item.av_oi ?: "—"}  ADD ${item.add_oi ?: "—"}",
             optometrista = item.optometrista,
-            onClick = {
+
+            onClickPdf = {
                 val file = PdfRevisionesUtils.generarPdfRevisionLc(
                     context = context,
                     nombre = nombre,
@@ -248,6 +257,10 @@ private fun SeccionLc(
                 )
 
                 onAbrirPdf(file.absolutePath, "Informe de revisión - Lentes de contacto")
+            },
+
+            onClickDetalle = {
+                println("Abrir detalle revisión LC ID: ${item.id_revision_lc}")
             }
         )
         Spacer(Modifier.height(10.dp))
@@ -260,7 +273,8 @@ private fun RevisionCard(
     od: String,
     oi: String,
     optometrista: String?,
-    onClick: () -> Unit
+    onClickPdf: () -> Unit,
+    onClickDetalle: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -274,11 +288,15 @@ private fun RevisionCard(
             verticalAlignment = Alignment.Top
         ) {
             AssistChip(
-                onClick = onClick,
+                onClick = onClickPdf,
                 label = { Text(formatFecha(fecha)) }
             )
 
-            Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onClickDetalle() }
+            ) {
                 Text("GRADUACIÓN OD", style = MaterialTheme.typography.labelSmall)
                 Text(od, style = MaterialTheme.typography.bodySmall)
                 Spacer(Modifier.height(6.dp))
