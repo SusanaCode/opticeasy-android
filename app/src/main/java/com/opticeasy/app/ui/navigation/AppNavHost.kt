@@ -44,6 +44,7 @@ fun AppNavHost() {
     val context = LocalContext.current
     val sessionManager = SessionManager(context)
     val adminUsuarios by sessionManager.adminUsuarios.collectAsState(initial = 0)
+    val idUsuario by sessionManager.idUsuario.collectAsState(initial = null)
 
     NavHost(
         navController = navController,
@@ -53,8 +54,16 @@ fun AppNavHost() {
         composable(Routes.SPLASH) {
             SplashScreen(
                 onFinished = {
-                    navController.navigate(Routes.INICIO) {
-                        popUpTo(Routes.SPLASH) { inclusive = true }
+                    if (idUsuario != null && idUsuario != 0L) {
+                        navController.navigate(Routes.MENU) {
+                            popUpTo(Routes.SPLASH) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    } else {
+                        navController.navigate(Routes.LOGIN) {
+                            popUpTo(Routes.SPLASH) { inclusive = true }
+                            launchSingleTop = true
+                        }
                     }
                 }
             )

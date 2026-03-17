@@ -31,9 +31,7 @@ fun SplashScreen(
         Image(
             painter = painterResource(id = R.drawable.logo_opticeasy_pdf),
             contentDescription = "OpticEasy",
-            modifier = Modifier
-                .width(320.dp)
+            modifier = Modifier.width(320.dp)
         )
     }
 }
-
