@@ -19,18 +19,16 @@ class NuevaRevisionLcViewModel(application: Application) : AndroidViewModel(appl
     private val _state = MutableStateFlow(RevisionLcFormState())
     val state: StateFlow<RevisionLcFormState> = _state
 
-    fun init(
-        clienteId: Long,
-        nombre: String,
-        apellidos: String,
-    ) {
+    fun init(clienteId: Long) {
+        if (_state.value.clienteId != 0L) return
+
         val hoy = LocalDate.now()
-        val hoyBackend = hoy.toString() // YYYY-MM-DD
+        val hoyBackend = hoy.toString()
 
         _state.value = _state.value.copy(
             clienteId = clienteId,
-            nombre = nombre,
-            apellidos = apellidos,
+            nombre = "",
+            apellidos = "",
             fechaRevision = hoyBackend
         )
     }
@@ -39,7 +37,6 @@ class NuevaRevisionLcViewModel(application: Application) : AndroidViewModel(appl
     fun updateAnamnesis(v: String) = _state.update { it.copy(anamnesis = v) }
     fun updateOtrasPruebas(v: String) = _state.update { it.copy(otrasPruebas = v) }
 
-    // OD
     fun updateEsferaOd(v: Double?) = _state.update { it.copy(esferaOd = v) }
     fun updateCilindroOd(v: Double?) = _state.update { it.copy(cilindroOd = v) }
     fun updateEjeOd(v: Int?) = _state.update { it.copy(ejeOd = v) }
@@ -55,7 +52,6 @@ class NuevaRevisionLcViewModel(application: Application) : AndroidViewModel(appl
 
     fun updateTipoLenteOd(v: String) = _state.update { it.copy(tipoLenteOd = v) }
 
-    // OI
     fun updateEsferaOi(v: Double?) = _state.update { it.copy(esferaOi = v) }
     fun updateCilindroOi(v: Double?) = _state.update { it.copy(cilindroOi = v) }
     fun updateEjeOi(v: Int?) = _state.update { it.copy(ejeOi = v) }
@@ -77,7 +73,6 @@ class NuevaRevisionLcViewModel(application: Application) : AndroidViewModel(appl
         val s = _state.value
         if (s.isSaving) return
 
-        // Backend: exige YYYY-MM-DD (length 10)
         if (s.fechaRevision.length != 10) {
             _state.update { it.copy(error = "fecha_revision inválida (YYYY-MM-DD)") }
             return
@@ -89,11 +84,9 @@ class NuevaRevisionLcViewModel(application: Application) : AndroidViewModel(appl
             try {
                 val body = RevisionLcCreateRequestDto(
                     fecha_revision = s.fechaRevision,
-
                     anamnesis = s.anamnesis.ifBlank { null },
                     otras_pruebas = s.otrasPruebas.ifBlank { null },
 
-                    // OD
                     esfera_od = s.esferaOd,
                     cilindro_od = s.cilindroOd,
                     eje_od = s.ejeOd,
@@ -102,7 +95,6 @@ class NuevaRevisionLcViewModel(application: Application) : AndroidViewModel(appl
                     dominante_od = if (s.dominanteOd) 1 else 0,
                     tipo_lente_od = s.tipoLenteOd.ifBlank { null },
 
-                    // OI
                     esfera_oi = s.esferaOi,
                     cilindro_oi = s.cilindroOi,
                     eje_oi = s.ejeOi,

@@ -1,6 +1,5 @@
 package com.opticeasy.app.ui.navigation
 
-
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,7 +49,6 @@ fun AppNavHost() {
         navController = navController,
         startDestination = Routes.SPLASH
     ) {
-
 
         composable(Routes.SPLASH) {
             SplashScreen(
@@ -134,7 +132,6 @@ fun AppNavHost() {
             )
         }
 
-
         composable(Routes.CREAR_CLIENTE) {
             ClientesScreen(
                 onMenuPrincipal = {
@@ -148,10 +145,13 @@ fun AppNavHost() {
             )
         }
 
-
-        composable(route = "${Routes.FIRMA_RGPD}/{clienteId}") { backStackEntry ->
-            val clienteId =
-                backStackEntry.arguments?.getString("clienteId")?.toIntOrNull() ?: 0
+        composable(
+            route = "${Routes.FIRMA_RGPD}/{clienteId}",
+            arguments = listOf(
+                navArgument("clienteId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val clienteId = backStackEntry.arguments?.getInt("clienteId") ?: 0
 
             FirmaRgpdScreen(
                 clienteId = clienteId,
@@ -164,7 +164,6 @@ fun AppNavHost() {
                 }
             )
         }
-
 
         composable(Routes.BUSCAR_CLIENTE) {
             BuscarClienteScreen(
@@ -179,7 +178,6 @@ fun AppNavHost() {
             )
         }
 
-
         composable(Routes.LISTADO_CLIENTES) {
             ListadoClientesScreen(
                 vm = clientesBuscarViewModel,
@@ -193,94 +191,82 @@ fun AppNavHost() {
             )
         }
 
-        composable(route = "${Routes.CLIENTE_DETALLE}/{clienteId}") { backStackEntry ->
-            val clienteId = backStackEntry.arguments
-                ?.getString("clienteId")
-                ?.toIntOrNull() ?: 0
+        composable(
+            route = "${Routes.CLIENTE_DETALLE}/{clienteId}",
+            arguments = listOf(
+                navArgument("clienteId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val clienteId = backStackEntry.arguments?.getInt("clienteId") ?: 0
 
             ClienteDetalleScreen(
                 clienteId = clienteId,
                 onNuevaFirmaRgpd = { id ->
                     navController.navigate("${Routes.FIRMA_RGPD}/$id")
                 },
-                onNuevaRevisionGafa = { id, nombre, apellidos, codigoCliente ->
-                    navController.navigate(
-                        "${Routes.NUEVA_REVISION_GAFA}/$id/$nombre/$apellidos/$codigoCliente"
-                    )
+                onNuevaRevisionGafa = { id ->
+                    navController.navigate("${Routes.NUEVA_REVISION_GAFA}/$id")
                 },
                 onMenuPrincipal = {
                     navController.navigate(Routes.MENU) {
                         popUpTo(Routes.MENU) { inclusive = true }
                     }
                 },
-                onNuevaRevisionLc = { id, nombre, apellidos, _ ->
-                    navController.navigate("${Routes.NUEVA_REVISION_LC}/$id/$nombre/$apellidos")
+                onNuevaRevisionLc = { id ->
+                    navController.navigate("${Routes.NUEVA_REVISION_LC}/$id")
                 },
-                onListadoRevisiones = { id, nombre, apellidos ->
-                    navController.navigate("${Routes.LISTADO_REVISIONES}/$id/$nombre/$apellidos")
+                onListadoRevisiones = { id ->
+                    navController.navigate("${Routes.LISTADO_REVISIONES}/$id")
                 },
                 onBack = { navController.popBackStack() }
             )
         }
 
         composable(
-            route = "${Routes.NUEVA_REVISION_GAFA}/{clienteId}/{nombre}/{apellidos}/{codigoCliente}"
+            route = "${Routes.NUEVA_REVISION_GAFA}/{clienteId}",
+            arguments = listOf(
+                navArgument("clienteId") { type = NavType.LongType }
+            )
         ) { backStackEntry ->
 
-            val clienteId = backStackEntry.arguments?.getString("clienteId")?.toLongOrNull() ?: 0L
-            val nombre = backStackEntry.arguments?.getString("nombre").orEmpty()
-            val apellidos = backStackEntry.arguments?.getString("apellidos").orEmpty()
-            val codigoCliente = backStackEntry.arguments?.getString("codigoCliente").orEmpty()
-
+            val clienteId = backStackEntry.arguments?.getLong("clienteId") ?: 0L
             val vm: NuevaRevisionGafaViewModel = viewModel()
 
             LaunchedEffect(clienteId) {
-                vm.init(clienteId, nombre, apellidos, codigoCliente)
+                vm.init(clienteId)
             }
 
             NuevaRevisionGafaScreen(
                 vm = vm,
-                onVolver = { navController.popBackStack() },
+                onVolver = { navController.popBackStack() }
             )
         }
 
         composable(
-            route = "${Routes.NUEVA_REVISION_LC}/{clienteId}/{nombre}/{apellidos}",
+            route = "${Routes.NUEVA_REVISION_LC}/{clienteId}",
             arguments = listOf(
-                navArgument("clienteId") { type = NavType.LongType },
-                navArgument("nombre") { type = NavType.StringType },
-                navArgument("apellidos") { type = NavType.StringType }
+                navArgument("clienteId") { type = NavType.LongType }
             )
         ) { backStackEntry ->
             val clienteId = backStackEntry.arguments?.getLong("clienteId") ?: 0L
-            val nombre = backStackEntry.arguments?.getString("nombre").orEmpty()
-            val apellidos = backStackEntry.arguments?.getString("apellidos").orEmpty()
 
             NuevaRevisionLcScreen(
                 clienteId = clienteId,
-                nombre = nombre,
-                apellidos = apellidos,
                 onBack = { navController.popBackStack() },
                 onGuardadoOk = { navController.popBackStack() }
             )
         }
 
         composable(
-            route = "${Routes.LISTADO_REVISIONES}/{clienteId}/{nombre}/{apellidos}",
+            route = "${Routes.LISTADO_REVISIONES}/{clienteId}",
             arguments = listOf(
-                navArgument("clienteId") { type = NavType.LongType },
-                navArgument("nombre") { type = NavType.StringType },
-                navArgument("apellidos") { type = NavType.StringType }
+                navArgument("clienteId") { type = NavType.LongType }
             )
         ) { backStackEntry ->
             val clienteId = backStackEntry.arguments?.getLong("clienteId") ?: 0L
-            val nombre = backStackEntry.arguments?.getString("nombre").orEmpty()
-            val apellidos = backStackEntry.arguments?.getString("apellidos").orEmpty()
 
             ListadoRevisionesScreen(
                 clienteId = clienteId,
-                nombre = nombre,
-                apellidos = apellidos,
                 onBack = { navController.popBackStack() },
                 onIrCliente = { navController.popBackStack() },
                 onAbrirPdf = { pdfPath, titulo ->
@@ -292,7 +278,11 @@ fun AppNavHost() {
         }
 
         composable(
-            route = "${Routes.PDF_VIEWER}/{pdfPath}/{titulo}"
+            route = "${Routes.PDF_VIEWER}/{pdfPath}/{titulo}",
+            arguments = listOf(
+                navArgument("pdfPath") { type = NavType.StringType },
+                navArgument("titulo") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
 
             val pdfPath = backStackEntry.arguments?.getString("pdfPath") ?: ""

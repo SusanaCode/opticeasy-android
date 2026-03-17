@@ -2,8 +2,8 @@ package com.opticeasy.app.ui.screens.revisiones.lc
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -33,15 +33,15 @@ private fun rangeInts(start: Int, end: Int, step: Int): List<String> =
     (start..end step step).map { it.toString() }
 
 private val OPC_ESFERA_LC = rangeDoubles(-20.00, 20.00, 0.25)
-private val OPC_CILINDRO_LC = rangeDoubles(-10.00, 0.00, 0.25).reversed() // 0.00..-10.00 (solo negativos)
+private val OPC_CILINDRO_LC = rangeDoubles(-10.00, 0.00, 0.25).reversed()
 private val OPC_EJE_LC = rangeInts(0, 180, 5)
 private val OPC_AV_LC = run {
     val out = mutableListOf<String>()
     val n = ((1.0 - 0.0) / 0.05).roundToInt()
-    for (i in 0..n) out.add(fmt2(0.0 + i * 0.05)) // 0.00..1.00 step 0.05
+    for (i in 0..n) out.add(fmt2(0.0 + i * 0.05))
     out
 }
-private val OPC_ADD_LC = rangeDoubles(0.00, 4.00, 0.25) // 0..4.00 step 0.25
+private val OPC_ADD_LC = rangeDoubles(0.00, 4.00, 0.25)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,7 +51,6 @@ private fun whiteFieldColors() = OutlinedTextFieldDefaults.colors(
     disabledContainerColor = MaterialTheme.colorScheme.surface,
     errorContainerColor = MaterialTheme.colorScheme.surface
 )
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,7 +72,9 @@ private fun SpinnerField(
         val v = normalizedValue.toDoubleOrNull() ?: return@remember options
         val step = if (options.size > 1) {
             abs(nums[1] - nums[0]).takeIf { it > 0 } ?: 0.25
-        } else 0.25
+        } else {
+            0.25
+        }
 
         fun f(x: Double) = fmt2(x)
 
@@ -144,8 +145,6 @@ private fun SpinnerField(
     }
 }
 
-/* ===================== FECHA ES (HOY) ===================== */
-
 private fun hoyEs(): String =
     LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale("es", "ES")))
 
@@ -153,19 +152,15 @@ private fun hoyEs(): String =
 @Composable
 fun NuevaRevisionLcScreen(
     clienteId: Long,
-    nombre: String,
-    apellidos: String,
     onBack: () -> Unit,
     onGuardadoOk: () -> Unit
 ) {
     val vm: NuevaRevisionLcViewModel = viewModel()
     val state by vm.state.collectAsState()
 
-
     LaunchedEffect(clienteId) {
-        vm.init(clienteId, nombre, apellidos)
+        vm.init(clienteId)
     }
-
 
     LaunchedEffect(state.ok) {
         if (state.ok) {
@@ -187,7 +182,6 @@ fun NuevaRevisionLcScreen(
         ) {
             Spacer(Modifier.height(12.dp))
 
-            // ===== ENCABEZADO como GAFA =====
             Text(
                 text = "Nueva revisión de lentes de contacto",
                 style = MaterialTheme.typography.headlineMedium,
@@ -213,7 +207,6 @@ fun NuevaRevisionLcScreen(
 
             Spacer(Modifier.height(20.dp))
 
-
             OutlinedTextField(
                 value = state.anamnesis,
                 onValueChange = vm::updateAnamnesis,
@@ -236,7 +229,6 @@ fun NuevaRevisionLcScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // ================== TARJETA: GRADUACIÓN (LC) ==================
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = shape16,
@@ -299,7 +291,6 @@ fun NuevaRevisionLcScreen(
                 Spacer(Modifier.height(8.dp))
             }
 
-            // ===== BOTONES como GAFA (full width) =====
             Column(
                 Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -355,7 +346,10 @@ private fun GraduacionBlock(
     val avStr = fmt2(av ?: 0.0)
     val addStr = fmt2(add ?: 0.0)
 
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         SpinnerField(
             label = "Esfera",
             value = esferaStr,
@@ -374,7 +368,10 @@ private fun GraduacionBlock(
 
     Spacer(Modifier.height(8.dp))
 
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         SpinnerField(
             label = "Eje",
             value = ejeStr,
@@ -394,7 +391,10 @@ private fun GraduacionBlock(
 
     Spacer(Modifier.height(8.dp))
 
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         SpinnerField(
             label = "ADD",
             value = addStr,
@@ -418,6 +418,9 @@ private fun GraduacionBlock(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text("Dominante")
-        Switch(checked = dominante, onCheckedChange = onDominanteChange)
+        Switch(
+            checked = dominante,
+            onCheckedChange = onDominanteChange
+        )
     }
 }

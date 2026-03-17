@@ -25,10 +25,10 @@ import com.opticeasy.app.viewmodel.clientes.ClienteDetalleViewModel
 fun ClienteDetalleScreen(
     clienteId: Int,
     onNuevaFirmaRgpd: (Int) -> Unit,
-    onNuevaRevisionGafa: (Long, String, String, String) -> Unit,
-    onNuevaRevisionLc: (Long, String, String, String) -> Unit,
+    onNuevaRevisionGafa: (Long) -> Unit,
+    onNuevaRevisionLc: (Long) -> Unit,
     onMenuPrincipal: () -> Unit,
-    onListadoRevisiones: (Long, String, String) -> Unit,
+    onListadoRevisiones: (Long) -> Unit,
     onBack: () -> Unit
 ) {
     val vm: ClienteDetalleViewModel = viewModel()
@@ -44,7 +44,6 @@ fun ClienteDetalleScreen(
     val shape16 = RoundedCornerShape(16.dp)
     val blockGap = 30.dp
 
-    // ===== Campos editables guardados al girar =====
     var nombre by rememberSaveable(clienteId) { mutableStateOf("") }
     var apellidos by rememberSaveable(clienteId) { mutableStateOf("") }
     var direccion by rememberSaveable(clienteId) { mutableStateOf("") }
@@ -57,7 +56,6 @@ fun ClienteDetalleScreen(
     var correo by rememberSaveable(clienteId) { mutableStateOf("") }
     var notas by rememberSaveable(clienteId) { mutableStateOf("") }
 
-    // Para rellenar solo una vez por cliente
     var datosInicializados by rememberSaveable(clienteId) { mutableStateOf(false) }
 
     val clienteSuccess = (state as? ClienteDetalleState.Success)?.cliente
@@ -85,7 +83,10 @@ fun ClienteDetalleScreen(
             when (val s = state) {
 
                 is ClienteDetalleState.Loading -> {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Card(shape = shape16) {
                             Row(
                                 modifier = Modifier.padding(16.dp),
@@ -123,7 +124,10 @@ fun ClienteDetalleScreen(
                         )
                         Spacer(Modifier.height(blockGap))
 
-                        Text(s.message, color = MaterialTheme.colorScheme.error)
+                        Text(
+                            text = s.message,
+                            color = MaterialTheme.colorScheme.error
+                        )
 
                         Spacer(Modifier.height(blockGap))
 
@@ -189,7 +193,7 @@ fun ClienteDetalleScreen(
                         Spacer(modifier = Modifier.height(30.dp))
 
                         Row(
-                            Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             OutlinedTextField(
@@ -200,6 +204,7 @@ fun ClienteDetalleScreen(
                                 enabled = !loading,
                                 colors = tfColors
                             )
+
                             OutlinedTextField(
                                 value = apellidos,
                                 onValueChange = { apellidos = it },
@@ -208,6 +213,7 @@ fun ClienteDetalleScreen(
                                 enabled = !loading,
                                 colors = tfColors
                             )
+
                             OutlinedTextField(
                                 value = codigo,
                                 onValueChange = {},
@@ -221,7 +227,7 @@ fun ClienteDetalleScreen(
                         Spacer(Modifier.height(12.dp))
 
                         Row(
-                            Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             OutlinedTextField(
@@ -232,6 +238,7 @@ fun ClienteDetalleScreen(
                                 enabled = !loading,
                                 colors = tfColors
                             )
+
                             OutlinedTextField(
                                 value = cp,
                                 onValueChange = { cp = it },
@@ -240,6 +247,7 @@ fun ClienteDetalleScreen(
                                 enabled = !loading,
                                 colors = tfColors
                             )
+
                             OutlinedTextField(
                                 value = poblacion,
                                 onValueChange = { poblacion = it },
@@ -253,7 +261,7 @@ fun ClienteDetalleScreen(
                         Spacer(Modifier.height(12.dp))
 
                         Row(
-                            Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             OutlinedTextField(
@@ -264,6 +272,7 @@ fun ClienteDetalleScreen(
                                 enabled = !loading,
                                 colors = tfColors
                             )
+
                             OutlinedTextField(
                                 value = dni,
                                 onValueChange = { dni = it },
@@ -272,6 +281,7 @@ fun ClienteDetalleScreen(
                                 enabled = !loading,
                                 colors = tfColors
                             )
+
                             OutlinedTextField(
                                 value = telefono,
                                 onValueChange = { telefono = it },
@@ -286,7 +296,7 @@ fun ClienteDetalleScreen(
                         Spacer(Modifier.height(12.dp))
 
                         Row(
-                            Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -329,50 +339,42 @@ fun ClienteDetalleScreen(
 
                             Button(
                                 onClick = {
-                                    onNuevaRevisionGafa(
-                                        c.idCliente.toLong(),
-                                        c.nombre,
-                                        c.apellidos,
-                                        c.idCliente.toString()
-                                    )
+                                    onNuevaRevisionGafa(c.idCliente.toLong())
                                 },
                                 enabled = !loading && esOptico,
                                 shape = shape16,
                                 modifier = actionBtnMod
-                            ) { Text("Nueva revisión\ngafa") }
+                            ) {
+                                Text("Nueva revisión\ngafa")
+                            }
 
                             Button(
                                 onClick = {
-                                    onNuevaRevisionLc(
-                                        c.idCliente.toLong(),
-                                        c.nombre,
-                                        c.apellidos,
-                                        c.idCliente.toString()
-                                    )
+                                    onNuevaRevisionLc(c.idCliente.toLong())
                                 },
                                 enabled = !loading && esOptico,
                                 shape = shape16,
                                 modifier = actionBtnMod
-                            ) { Text("Nueva revisión\nlentes de contacto") }
+                            ) {
+                                Text("Nueva revisión\nlentes de contacto")
+                            }
 
                             Button(
                                 onClick = {
-                                    onListadoRevisiones(
-                                        c.idCliente.toLong(),
-                                        c.nombre,
-                                        c.apellidos
-                                    )
+                                    onListadoRevisiones(c.idCliente.toLong())
                                 },
                                 enabled = !loading,
                                 shape = shape16,
                                 modifier = actionBtnMod
-                            ) { Text("Listado\nrevisiones") }
+                            ) {
+                                Text("Listado\nrevisiones")
+                            }
                         }
 
                         if (!esOptico) {
                             Spacer(Modifier.height(8.dp))
                             Text(
-                                "Acceso a crear revisiones solo para Óptico.",
+                                text = "Acceso a crear revisiones solo para Óptico.",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.outline
                             )
@@ -417,7 +419,9 @@ fun ClienteDetalleScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(56.dp)
-                        ) { Text("Guardar actualización") }
+                        ) {
+                            Text("Guardar actualización")
+                        }
 
                         Spacer(Modifier.height(12.dp))
 
@@ -428,7 +432,9 @@ fun ClienteDetalleScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(56.dp)
-                        ) { Text("Menú principal") }
+                        ) {
+                            Text("Menú principal")
+                        }
 
                         Spacer(Modifier.height(24.dp))
                     }

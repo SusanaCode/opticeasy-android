@@ -2,8 +2,8 @@ package com.opticeasy.app.ui.screens.revisiones.gafa
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -21,8 +21,6 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.roundToInt
 
-/* ===================== FORMATOS CON SIGNO ===================== */
-
 private fun fmtSigned2(v: Double): String {
     val sign = if (v >= 0) "+" else ""
     return sign + String.format(Locale.US, "%.2f", v)
@@ -36,49 +34,41 @@ private fun fmtSigned1(v: Double): String {
 private fun rangeSignedDoubles(start: Double, end: Double, step: Double): List<String> {
     val out = mutableListOf<String>()
     val nSteps = ((end - start) / step).roundToInt()
-    for (i in 0..nSteps) out.add(fmtSigned2(start + i * step))
+    for (i in 0..nSteps) {
+        out.add(fmtSigned2(start + i * step))
+    }
     return out
 }
 
 private fun rangeInts(start: Int, end: Int, step: Int): List<String> =
     (start..end step step).map { it.toString() }
 
-/* ===================== OPCIONES ===================== */
-
-
 private val OPC_ESFERA = rangeSignedDoubles(-30.00, 15.00, 0.25).reversed()
-
 private val OPC_CILINDRO = rangeSignedDoubles(-10.00, 0.00, 0.25).reversed()
-
 private val OPC_EJE = rangeInts(0, 180, 5)
-
-// AV: +0.0..+1.0
 private val OPC_AV = (0..10).map { fmtSigned1(it / 10.0) }
-
 private val OPC_ADD = rangeSignedDoubles(0.00, 3.50, 0.25)
 private val OPC_CCF = rangeSignedDoubles(0.00, 3.50, 0.25)
-private val OPC_ARN = rangeSignedDoubles(-3.00, 0.00, 0.25).reversed() // +0.00..-3.00
+private val OPC_ARN = rangeSignedDoubles(-3.00, 0.00, 0.25).reversed()
 private val OPC_ARP = rangeSignedDoubles(0.00, 3.00, 0.25)
 
 private val OPC_PRISMA = run {
     val out = mutableListOf<String>()
     val n = ((20.0 - 0.0) / 0.5).roundToInt()
-    for (i in 0..n) out.add(fmtSigned1(0.0 + i * 0.5))
+    for (i in 0..n) {
+        out.add(fmtSigned1(0.0 + i * 0.5))
+    }
     out
 }
 
-/* ===================== FECHA ES ===================== */
-
 private fun fechaEsFromIsoOrSame(value: String): String {
     return try {
-        val d = LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE) // YYYY-MM-DD
+        val d = LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE)
         d.format(DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale("es", "ES")))
     } catch (_: Throwable) {
         value
     }
 }
-
-/* ===================== COLORES CAMPOS ===================== */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,8 +78,6 @@ private fun whiteFieldColors() = OutlinedTextFieldDefaults.colors(
     disabledContainerColor = MaterialTheme.colorScheme.surface,
     errorContainerColor = MaterialTheme.colorScheme.surface
 )
-
-/* ===================== SPINNER (LC) ===================== */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -127,7 +115,7 @@ private fun SpinnerFieldLcStyle(
             onDismissRequest = { expanded = false },
             containerColor = OpticCardBg,
             tonalElevation = 0.dp
-        )  {
+        ) {
             options.forEach { opt ->
                 DropdownMenuItem(
                     text = { Text(opt) },
@@ -140,8 +128,6 @@ private fun SpinnerFieldLcStyle(
         }
     }
 }
-
-/* ===================== SPINNER ESFERA  ===================== */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -194,7 +180,7 @@ private fun SpinnerFieldEsferaLcStyle(
             onDismissRequest = { expanded = false },
             containerColor = OpticCardBg,
             tonalElevation = 0.dp
-        )  {
+        ) {
             Column(
                 modifier = Modifier
                     .heightIn(max = 320.dp)
@@ -217,8 +203,6 @@ private fun SpinnerFieldEsferaLcStyle(
     }
 }
 
-/* ===================== BLOQUES GRADUACIÓN (LC) ===================== */
-
 @Composable
 private fun GraduacionUsadaBlock(
     esfera: String,
@@ -231,7 +215,10 @@ private fun GraduacionUsadaBlock(
     onAvChange: (String) -> Unit,
     enabled: Boolean
 ) {
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         SpinnerFieldEsferaLcStyle(
             label = "Esfera",
             value = esfera,
@@ -252,7 +239,10 @@ private fun GraduacionUsadaBlock(
 
     Spacer(Modifier.height(8.dp))
 
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         SpinnerFieldLcStyle(
             label = "Eje",
             value = eje,
@@ -296,7 +286,10 @@ private fun GraduacionNuevaBlock(
     onDominanteChange: (Boolean) -> Unit,
     enabled: Boolean
 ) {
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         SpinnerFieldEsferaLcStyle(
             label = "Esfera",
             value = esfera,
@@ -317,7 +310,10 @@ private fun GraduacionNuevaBlock(
 
     Spacer(Modifier.height(8.dp))
 
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         SpinnerFieldLcStyle(
             label = "Eje",
             value = eje,
@@ -338,7 +334,10 @@ private fun GraduacionNuevaBlock(
 
     Spacer(Modifier.height(8.dp))
 
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         SpinnerFieldLcStyle(
             label = "ADD",
             value = add,
@@ -359,7 +358,10 @@ private fun GraduacionNuevaBlock(
 
     Spacer(Modifier.height(8.dp))
 
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         SpinnerFieldLcStyle(
             label = "CCF",
             value = ccf,
@@ -380,7 +382,10 @@ private fun GraduacionNuevaBlock(
 
     Spacer(Modifier.height(8.dp))
 
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         SpinnerFieldLcStyle(
             label = "ARP",
             value = arp,
@@ -407,15 +412,12 @@ private fun GraduacionNuevaBlock(
     }
 }
 
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NuevaRevisionGafaScreen(
     vm: NuevaRevisionGafaViewModel,
-    onVolver: () -> Unit,
-
-    ) {
+    onVolver: () -> Unit
+) {
     val state by vm.state.collectAsState()
 
     val green = MaterialTheme.colorScheme.primary
@@ -427,7 +429,9 @@ fun NuevaRevisionGafaScreen(
         disabledContainerColor = MaterialTheme.colorScheme.surface
     )
 
-    val fechaEs = remember(state.fechaRevision) { fechaEsFromIsoOrSame(state.fechaRevision) }
+    val fechaEs = remember(state.fechaRevision) {
+        fechaEsFromIsoOrSame(state.fechaRevision)
+    }
 
     BaseScreen {
         Column(
@@ -454,6 +458,7 @@ fun NuevaRevisionGafaScreen(
             )
 
             Spacer(Modifier.height(8.dp))
+
             Text(
                 text = "${state.nombre} ${state.apellidos} · Fecha: $fechaEs",
                 style = MaterialTheme.typography.bodyMedium,
@@ -480,36 +485,66 @@ fun NuevaRevisionGafaScreen(
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
                 Column(
-                    Modifier.padding(12.dp),
+                    modifier = Modifier.padding(12.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text("Graduación usada", style = MaterialTheme.typography.titleMedium, color = green)
+                    Text(
+                        text = "Graduación usada",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = green
+                    )
 
-                    Text("OD", style = MaterialTheme.typography.titleSmall, color = green)
+                    Text(
+                        text = "OD",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = green
+                    )
+
                     GraduacionUsadaBlock(
                         esfera = state.usadaOD.esfera,
                         cilindro = state.usadaOD.cilindro,
                         eje = state.usadaOD.eje,
                         av = state.usadaOD.av,
-                        onEsferaChange = { v -> vm.update { st -> st.copy(usadaOD = st.usadaOD.copy(esfera = v)) } },
-                        onCilindroChange = { v -> vm.update { st -> st.copy(usadaOD = st.usadaOD.copy(cilindro = v)) } },
-                        onEjeChange = { v -> vm.update { st -> st.copy(usadaOD = st.usadaOD.copy(eje = v)) } },
-                        onAvChange = { v -> vm.update { st -> st.copy(usadaOD = st.usadaOD.copy(av = v)) } },
+                        onEsferaChange = { v ->
+                            vm.update { st -> st.copy(usadaOD = st.usadaOD.copy(esfera = v)) }
+                        },
+                        onCilindroChange = { v ->
+                            vm.update { st -> st.copy(usadaOD = st.usadaOD.copy(cilindro = v)) }
+                        },
+                        onEjeChange = { v ->
+                            vm.update { st -> st.copy(usadaOD = st.usadaOD.copy(eje = v)) }
+                        },
+                        onAvChange = { v ->
+                            vm.update { st -> st.copy(usadaOD = st.usadaOD.copy(av = v)) }
+                        },
                         enabled = !state.loading
                     )
 
                     Spacer(Modifier.height(6.dp))
 
-                    Text("OI", style = MaterialTheme.typography.titleSmall, color = green)
+                    Text(
+                        text = "OI",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = green
+                    )
+
                     GraduacionUsadaBlock(
                         esfera = state.usadaOI.esfera,
                         cilindro = state.usadaOI.cilindro,
                         eje = state.usadaOI.eje,
                         av = state.usadaOI.av,
-                        onEsferaChange = { v -> vm.update { st -> st.copy(usadaOI = st.usadaOI.copy(esfera = v)) } },
-                        onCilindroChange = { v -> vm.update { st -> st.copy(usadaOI = st.usadaOI.copy(cilindro = v)) } },
-                        onEjeChange = { v -> vm.update { st -> st.copy(usadaOI = st.usadaOI.copy(eje = v)) } },
-                        onAvChange = { v -> vm.update { st -> st.copy(usadaOI = st.usadaOI.copy(av = v)) } },
+                        onEsferaChange = { v ->
+                            vm.update { st -> st.copy(usadaOI = st.usadaOI.copy(esfera = v)) }
+                        },
+                        onCilindroChange = { v ->
+                            vm.update { st -> st.copy(usadaOI = st.usadaOI.copy(cilindro = v)) }
+                        },
+                        onEjeChange = { v ->
+                            vm.update { st -> st.copy(usadaOI = st.usadaOI.copy(eje = v)) }
+                        },
+                        onAvChange = { v ->
+                            vm.update { st -> st.copy(usadaOI = st.usadaOI.copy(av = v)) }
+                        },
                         enabled = !state.loading
                     )
                 }
@@ -523,12 +558,21 @@ fun NuevaRevisionGafaScreen(
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
                 Column(
-                    Modifier.padding(12.dp),
+                    modifier = Modifier.padding(12.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text("Nueva graduación", style = MaterialTheme.typography.titleMedium, color = green)
+                    Text(
+                        text = "Nueva graduación",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = green
+                    )
 
-                    Text("OD", style = MaterialTheme.typography.titleSmall, color = green)
+                    Text(
+                        text = "OD",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = green
+                    )
+
                     GraduacionNuevaBlock(
                         esfera = state.nuevaOD.esfera,
                         cilindro = state.nuevaOD.cilindro,
@@ -540,20 +584,40 @@ fun NuevaRevisionGafaScreen(
                         arn = state.nuevaOD.arn,
                         arp = state.nuevaOD.arp,
                         dominante = state.nuevaOD.dominante,
-                        onEsferaChange = { v -> vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(esfera = v)) } },
-                        onCilindroChange = { v -> vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(cilindro = v)) } },
-                        onEjeChange = { v -> vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(eje = v)) } },
-                        onAvChange = { v -> vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(av = v)) } },
-                        onAddChange = { v -> vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(add = v)) } },
-                        onPrismaChange = { v -> vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(prisma = v)) } },
-                        onCcfChange = { v -> vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(ccf = v)) } },
-                        onArnChange = { v -> vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(arn = v)) } },
-                        onArpChange = { v -> vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(arp = v)) } },
+                        onEsferaChange = { v ->
+                            vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(esfera = v)) }
+                        },
+                        onCilindroChange = { v ->
+                            vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(cilindro = v)) }
+                        },
+                        onEjeChange = { v ->
+                            vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(eje = v)) }
+                        },
+                        onAvChange = { v ->
+                            vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(av = v)) }
+                        },
+                        onAddChange = { v ->
+                            vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(add = v)) }
+                        },
+                        onPrismaChange = { v ->
+                            vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(prisma = v)) }
+                        },
+                        onCcfChange = { v ->
+                            vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(ccf = v)) }
+                        },
+                        onArnChange = { v ->
+                            vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(arn = v)) }
+                        },
+                        onArpChange = { v ->
+                            vm.update { st -> st.copy(nuevaOD = st.nuevaOD.copy(arp = v)) }
+                        },
                         onDominanteChange = { checked ->
                             vm.update { st ->
                                 st.copy(
                                     nuevaOD = st.nuevaOD.copy(dominante = checked),
-                                    nuevaOI = st.nuevaOI.copy(dominante = if (checked) false else st.nuevaOI.dominante)
+                                    nuevaOI = st.nuevaOI.copy(
+                                        dominante = if (checked) false else st.nuevaOI.dominante
+                                    )
                                 )
                             }
                         },
@@ -562,7 +626,12 @@ fun NuevaRevisionGafaScreen(
 
                     Divider(color = green.copy(alpha = 0.25f))
 
-                    Text("OI", style = MaterialTheme.typography.titleSmall, color = green)
+                    Text(
+                        text = "OI",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = green
+                    )
+
                     GraduacionNuevaBlock(
                         esfera = state.nuevaOI.esfera,
                         cilindro = state.nuevaOI.cilindro,
@@ -574,20 +643,40 @@ fun NuevaRevisionGafaScreen(
                         arn = state.nuevaOI.arn,
                         arp = state.nuevaOI.arp,
                         dominante = state.nuevaOI.dominante,
-                        onEsferaChange = { v -> vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(esfera = v)) } },
-                        onCilindroChange = { v -> vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(cilindro = v)) } },
-                        onEjeChange = { v -> vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(eje = v)) } },
-                        onAvChange = { v -> vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(av = v)) } },
-                        onAddChange = { v -> vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(add = v)) } },
-                        onPrismaChange = { v -> vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(prisma = v)) } },
-                        onCcfChange = { v -> vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(ccf = v)) } },
-                        onArnChange = { v -> vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(arn = v)) } },
-                        onArpChange = { v -> vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(arp = v)) } },
+                        onEsferaChange = { v ->
+                            vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(esfera = v)) }
+                        },
+                        onCilindroChange = { v ->
+                            vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(cilindro = v)) }
+                        },
+                        onEjeChange = { v ->
+                            vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(eje = v)) }
+                        },
+                        onAvChange = { v ->
+                            vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(av = v)) }
+                        },
+                        onAddChange = { v ->
+                            vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(add = v)) }
+                        },
+                        onPrismaChange = { v ->
+                            vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(prisma = v)) }
+                        },
+                        onCcfChange = { v ->
+                            vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(ccf = v)) }
+                        },
+                        onArnChange = { v ->
+                            vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(arn = v)) }
+                        },
+                        onArpChange = { v ->
+                            vm.update { st -> st.copy(nuevaOI = st.nuevaOI.copy(arp = v)) }
+                        },
                         onDominanteChange = { checked ->
                             vm.update { st ->
                                 st.copy(
                                     nuevaOI = st.nuevaOI.copy(dominante = checked),
-                                    nuevaOD = st.nuevaOD.copy(dominante = if (checked) false else st.nuevaOD.dominante)
+                                    nuevaOD = st.nuevaOD.copy(
+                                        dominante = if (checked) false else st.nuevaOD.dominante
+                                    )
                                 )
                             }
                         },
@@ -610,15 +699,25 @@ fun NuevaRevisionGafaScreen(
             Spacer(Modifier.height(12.dp))
 
             if (state.error != null) {
-                Text(state.error!!, color = MaterialTheme.colorScheme.error)
+                Text(
+                    text = state.error!!,
+                    color = MaterialTheme.colorScheme.error
+                )
             }
+
             if (state.savedOk) {
-                Text("Guardado correctamente ✅", color = green)
+                Text(
+                    text = "Guardado correctamente ✅",
+                    color = green
+                )
             }
 
             Spacer(Modifier.height(12.dp))
 
-            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
                 Button(
                     onClick = { vm.guardar() },
                     enabled = !state.loading,
@@ -637,7 +736,9 @@ fun NuevaRevisionGafaScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
-                ) { Text("Atrás") }
+                ) {
+                    Text("Atrás")
+                }
             }
 
             Spacer(Modifier.height(24.dp))

@@ -12,11 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.opticeasy.app.data.remote.dto.revisiones_gafa.RevisionGafaListItemDto
 import com.opticeasy.app.data.remote.dto.Revisiones_lc.RevisionLcListItemDto
+import com.opticeasy.app.data.remote.dto.revisiones_gafa.RevisionGafaListItemDto
 import com.opticeasy.app.ui.components.BaseScreen
-import com.opticeasy.app.ui.theme.OpticCardBg
 import com.opticeasy.app.ui.screens.revisiones.pdf.PdfRevisionesUtils
+import com.opticeasy.app.ui.theme.OpticCardBg
 import com.opticeasy.app.viewmodel.revisiones.RevisionesListadoState
 import com.opticeasy.app.viewmodel.revisiones.RevisionesListadoViewModel
 import java.time.LocalDate
@@ -25,8 +25,6 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun ListadoRevisionesScreen(
     clienteId: Long,
-    nombre: String,
-    apellidos: String,
     onBack: () -> Unit,
     onIrCliente: () -> Unit,
     onAbrirPdf: (String, String) -> Unit
@@ -37,8 +35,9 @@ fun ListadoRevisionesScreen(
     val green = MaterialTheme.colorScheme.primary
     val shape16 = RoundedCornerShape(16.dp)
 
-
-    LaunchedEffect(clienteId) { vm.cargar(clienteId) }
+    LaunchedEffect(clienteId) {
+        vm.cargar(clienteId)
+    }
 
     BaseScreen(contentTopPadding = 0.dp) {
         Column(
@@ -67,13 +66,14 @@ fun ListadoRevisionesScreen(
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "$nombre $apellidos",
+                text = "Cliente $clienteId",
                 style = MaterialTheme.typography.bodyMedium,
                 color = green,
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(Modifier.height(50.dp))
+
             when (val s = state) {
                 is RevisionesListadoState.Loading -> {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -84,9 +84,14 @@ fun ListadoRevisionesScreen(
                 }
 
                 is RevisionesListadoState.Error -> {
-                    Text(s.message, color = MaterialTheme.colorScheme.error)
+                    Text(
+                        text = s.message,
+                        color = MaterialTheme.colorScheme.error
+                    )
                     Spacer(Modifier.height(10.dp))
-                    Button(onClick = onBack) { Text("Volver al cliente") }
+                    Button(onClick = onBack) {
+                        Text("Volver al cliente")
+                    }
                 }
 
                 is RevisionesListadoState.Success -> {
@@ -94,8 +99,6 @@ fun ListadoRevisionesScreen(
                         items = s.revisionesGafa,
                         context = context,
                         clienteId = clienteId,
-                        nombre = nombre,
-                        apellidos = apellidos,
                         onAbrirPdf = onAbrirPdf
                     )
 
@@ -105,11 +108,11 @@ fun ListadoRevisionesScreen(
                         items = s.revisionesLc,
                         context = context,
                         clienteId = clienteId,
-                        nombre = nombre,
-                        apellidos = apellidos,
                         onAbrirPdf = onAbrirPdf
                     )
+
                     Spacer(Modifier.height(18.dp))
+
                     Button(
                         onClick = onIrCliente,
                         shape = shape16,
@@ -132,12 +135,14 @@ private fun SeccionGafa(
     items: List<RevisionGafaListItemDto>,
     context: Context,
     clienteId: Long,
-    nombre: String,
-    apellidos: String,
     onAbrirPdf: (String, String) -> Unit
 ) {
     Text("REVISIONES PARA GAFA", style = MaterialTheme.typography.titleSmall)
-    Divider(Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp))
+    Divider(
+        Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp, bottom = 12.dp)
+    )
 
     if (items.isEmpty()) {
         Text("No hay revisiones de gafa")
@@ -153,8 +158,8 @@ private fun SeccionGafa(
             onClick = {
                 val file = PdfRevisionesUtils.generarPdfRevisionGafa(
                     context = context,
-                    nombre = nombre,
-                    apellidos = apellidos,
+                    nombre = "",
+                    apellidos = "",
                     codigoCliente = clienteId.toString(),
                     fechaRevisionYYYYMMDD = item.fecha_revision,
                     od = PdfRevisionesUtils.RevisionOjoPdf(
@@ -187,12 +192,14 @@ private fun SeccionLc(
     items: List<RevisionLcListItemDto>,
     context: Context,
     clienteId: Long,
-    nombre: String,
-    apellidos: String,
     onAbrirPdf: (String, String) -> Unit
 ) {
     Text("REVISIONES PARA LC", style = MaterialTheme.typography.titleSmall)
-    Divider(Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp))
+    Divider(
+        Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp, bottom = 12.dp)
+    )
 
     if (items.isEmpty()) {
         Text("No hay revisiones de LC")
@@ -208,8 +215,8 @@ private fun SeccionLc(
             onClick = {
                 val file = PdfRevisionesUtils.generarPdfRevisionLc(
                     context = context,
-                    nombre = nombre,
-                    apellidos = apellidos,
+                    nombre = "",
+                    apellidos = "",
                     codigoCliente = clienteId.toString(),
                     fechaRevisionYYYYMMDD = item.fecha_revision,
                     od = PdfRevisionesUtils.RevisionOjoPdf(
@@ -250,7 +257,7 @@ private fun RevisionCard(
         colors = CardDefaults.cardColors(
             containerColor = OpticCardBg
         )
-    ){
+    ) {
         Row(
             modifier = Modifier.padding(12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -291,4 +298,3 @@ private fun formatFecha(yyyyMMdd: String): String {
         yyyyMMdd
     }
 }
-

@@ -23,13 +23,14 @@ class NuevaRevisionGafaViewModel(application: Application) : AndroidViewModel(ap
     )
     val state: StateFlow<RevisionGafaFormState> = _state
 
-    fun init(clienteId: Long, nombre: String, apellidos: String, codigoCliente: String) {
+    fun init(clienteId: Long) {
         if (_state.value.clienteId != 0L) return
+
         _state.value = _state.value.copy(
             clienteId = clienteId,
-            nombre = nombre,
-            apellidos = apellidos,
-            codigoCliente = codigoCliente,
+            nombre = "",
+            apellidos = "",
+            codigoCliente = clienteId.toString(),
             fechaRevision = LocalDate.now().toString(),
             error = null,
             savedOk = false
@@ -37,7 +38,10 @@ class NuevaRevisionGafaViewModel(application: Application) : AndroidViewModel(ap
     }
 
     fun update(reducer: (RevisionGafaFormState) -> RevisionGafaFormState) {
-        _state.value = reducer(_state.value).copy(error = null, savedOk = false)
+        _state.value = reducer(_state.value).copy(
+            error = null,
+            savedOk = false
+        )
     }
 
     fun guardar() {
@@ -47,22 +51,29 @@ class NuevaRevisionGafaViewModel(application: Application) : AndroidViewModel(ap
             _state.value = s.copy(error = "clienteId inválido")
             return
         }
+
         if (s.fechaRevision.isNotBlank() && s.fechaRevision.length != 10) {
             _state.value = s.copy(error = "fecha inválida (YYYY-MM-DD)")
             return
         }
 
-        _state.value = s.copy(loading = true, error = null, savedOk = false)
+        _state.value = s.copy(
+            loading = true,
+            error = null,
+            savedOk = false
+        )
 
         viewModelScope.launch {
             try {
-                // El backend toma id_optometrista desde el token
                 repo.crearRevisionGafa(
                     clienteId = s.clienteId,
                     request = s.toCreateRequestDto()
                 )
 
-                _state.value = _state.value.copy(loading = false, savedOk = true)
+                _state.value = _state.value.copy(
+                    loading = false,
+                    savedOk = true
+                )
             } catch (e: Exception) {
                 _state.value = _state.value.copy(
                     loading = false,
@@ -83,13 +94,11 @@ private fun RevisionGafaFormState.toCreateRequestDto(): RevisionGafaCreateReques
         anamnesis = anamnesis.toNullable(),
         otrasPruebas = otrasPruebas.toNullable(),
 
-        // USADA OD
         esferaUsadaOd = usadaOD.esfera.toD(),
         cilindroUsadaOd = usadaOD.cilindro.toD(),
         ejeUsadaOd = usadaOD.eje.toI(),
         avUsadaOd = usadaOD.av.toD(),
 
-        // NUEVA OD
         esferaOd = nuevaOD.esfera.toD(),
         cilindroOd = nuevaOD.cilindro.toD(),
         ejeOd = nuevaOD.eje.toI(),
@@ -101,13 +110,11 @@ private fun RevisionGafaFormState.toCreateRequestDto(): RevisionGafaCreateReques
         arpOd = nuevaOD.arp.toD(),
         dominanteOd = if (nuevaOD.dominante) 1 else 0,
 
-        // USADA OI
         esferaUsadaOi = usadaOI.esfera.toD(),
         cilindroUsadaOi = usadaOI.cilindro.toD(),
         ejeUsadaOi = usadaOI.eje.toI(),
         avUsadaOi = usadaOI.av.toD(),
 
-        // NUEVA OI
         esferaOi = nuevaOI.esfera.toD(),
         cilindroOi = nuevaOI.cilindro.toD(),
         ejeOi = nuevaOI.eje.toI(),
