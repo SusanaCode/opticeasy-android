@@ -65,15 +65,6 @@ fun ListadoRevisionesScreen(
 
             Spacer(Modifier.height(8.dp))
 
-            Text(
-                text = "Cliente $clienteId",
-                style = MaterialTheme.typography.bodyMedium,
-                color = green,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(Modifier.height(50.dp))
-
             when (val s = state) {
                 is RevisionesListadoState.Loading -> {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -95,10 +86,23 @@ fun ListadoRevisionesScreen(
                 }
 
                 is RevisionesListadoState.Success -> {
+                    val cliente = s.cliente
+
+                    Text(
+                        text = "${cliente.nombre} ${cliente.apellidos}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = green,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(Modifier.height(20.dp))
+
                     SeccionGafa(
                         items = s.revisionesGafa,
                         context = context,
                         clienteId = clienteId,
+                        nombre = cliente.nombre,
+                        apellidos = cliente.apellidos,
                         onAbrirPdf = onAbrirPdf
                     )
 
@@ -108,6 +112,8 @@ fun ListadoRevisionesScreen(
                         items = s.revisionesLc,
                         context = context,
                         clienteId = clienteId,
+                        nombre = cliente.nombre,
+                        apellidos = cliente.apellidos,
                         onAbrirPdf = onAbrirPdf
                     )
 
@@ -135,6 +141,8 @@ private fun SeccionGafa(
     items: List<RevisionGafaListItemDto>,
     context: Context,
     clienteId: Long,
+    nombre: String,
+    apellidos: String,
     onAbrirPdf: (String, String) -> Unit
 ) {
     Text("REVISIONES PARA GAFA", style = MaterialTheme.typography.titleSmall)
@@ -158,8 +166,8 @@ private fun SeccionGafa(
             onClick = {
                 val file = PdfRevisionesUtils.generarPdfRevisionGafa(
                     context = context,
-                    nombre = "",
-                    apellidos = "",
+                    nombre = nombre,
+                    apellidos = apellidos,
                     codigoCliente = clienteId.toString(),
                     fechaRevisionYYYYMMDD = item.fecha_revision,
                     od = PdfRevisionesUtils.RevisionOjoPdf(
@@ -192,6 +200,8 @@ private fun SeccionLc(
     items: List<RevisionLcListItemDto>,
     context: Context,
     clienteId: Long,
+    nombre: String,
+    apellidos: String,
     onAbrirPdf: (String, String) -> Unit
 ) {
     Text("REVISIONES PARA LC", style = MaterialTheme.typography.titleSmall)
@@ -215,8 +225,8 @@ private fun SeccionLc(
             onClick = {
                 val file = PdfRevisionesUtils.generarPdfRevisionLc(
                     context = context,
-                    nombre = "",
-                    apellidos = "",
+                    nombre = nombre,
+                    apellidos = apellidos,
                     codigoCliente = clienteId.toString(),
                     fechaRevisionYYYYMMDD = item.fecha_revision,
                     od = PdfRevisionesUtils.RevisionOjoPdf(
