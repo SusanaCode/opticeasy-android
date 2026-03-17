@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.opticeasy.app.data.remote.dto.revisiones_gafa.RevisionGafaCreateRequestDto
+import com.opticeasy.app.data.repository.ClientesRepository
 import com.opticeasy.app.data.repository.RevisionesGafaRepository
 import com.opticeasy.app.ui.screens.revisiones.gafa.RevisionGafaFormState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +15,7 @@ import java.time.LocalDate
 class NuevaRevisionGafaViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repo = RevisionesGafaRepository(application.applicationContext)
+    private val repoClientes = ClientesRepository(application.applicationContext)
 
     private val _state = MutableStateFlow(
         RevisionGafaFormState(
@@ -26,15 +28,31 @@ class NuevaRevisionGafaViewModel(application: Application) : AndroidViewModel(ap
     fun init(clienteId: Long) {
         if (_state.value.clienteId != 0L) return
 
-        _state.value = _state.value.copy(
-            clienteId = clienteId,
-            nombre = "",
-            apellidos = "",
-            codigoCliente = clienteId.toString(),
-            fechaRevision = LocalDate.now().toString(),
-            error = null,
-            savedOk = false
-        )
+        viewModelScope.launch {
+            try {
+                val cliente = repoClientes.obtenerClientePorId(clienteId.toInt())
+
+                _state.value = _state.value.copy(
+                    clienteId = clienteId,
+                    nombre = cliente.nombre,
+                    apellidos = cliente.apellidos,
+                    codigoCliente = cliente.idCliente.toString(),
+                    fechaRevision = LocalDate.now().toString(),
+                    error = null,
+                    savedOk = false
+                )
+            } catch (_: Exception) {
+                _state.value = _state.value.copy(
+                    clienteId = clienteId,
+                    nombre = "",
+                    apellidos = "",
+                    codigoCliente = clienteId.toString(),
+                    fechaRevision = LocalDate.now().toString(),
+                    error = "No se pudo cargar la ficha del cliente.",
+                    savedOk = false
+                )
+            }
+        }
     }
 
     fun update(reducer: (RevisionGafaFormState) -> RevisionGafaFormState) {
@@ -48,12 +66,12 @@ class NuevaRevisionGafaViewModel(application: Application) : AndroidViewModel(ap
         val s = _state.value
 
         if (s.clienteId <= 0L) {
-            _state.value = s.copy(error = "clienteId inválido")
+            _state.value = s.copy(error = "Cliente inválido.")
             return
         }
 
         if (s.fechaRevision.isNotBlank() && s.fechaRevision.length != 10) {
-            _state.value = s.copy(error = "fecha inválida (YYYY-MM-DD)")
+            _state.value = s.copy(error = "Fecha inválida.")
             return
         }
 
@@ -74,10 +92,10 @@ class NuevaRevisionGafaViewModel(application: Application) : AndroidViewModel(ap
                     loading = false,
                     savedOk = true
                 )
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 _state.value = _state.value.copy(
                     loading = false,
-                    error = e.message ?: "Error guardando revisión"
+                    error = "No se pudo guardar la revisión de gafa. Inténtalo de nuevo."
                 )
             }
         }

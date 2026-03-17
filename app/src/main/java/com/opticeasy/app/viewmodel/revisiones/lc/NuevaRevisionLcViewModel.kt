@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.opticeasy.app.data.remote.dto.Revisiones_lc.RevisionLcCreateRequestDto
+import com.opticeasy.app.data.repository.ClientesRepository
 import com.opticeasy.app.data.repository.RevisionesLcRepository
 import com.opticeasy.app.ui.screens.revisiones.lc.RevisionLcFormState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,7 @@ import java.time.LocalDate
 class NuevaRevisionLcViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repo = RevisionesLcRepository(application.applicationContext)
+    private val repoClientes = ClientesRepository(application.applicationContext)
 
     private val _state = MutableStateFlow(RevisionLcFormState())
     val state: StateFlow<RevisionLcFormState> = _state
@@ -22,15 +24,29 @@ class NuevaRevisionLcViewModel(application: Application) : AndroidViewModel(appl
     fun init(clienteId: Long) {
         if (_state.value.clienteId != 0L) return
 
-        val hoy = LocalDate.now()
-        val hoyBackend = hoy.toString()
+        val hoyBackend = LocalDate.now().toString()
 
-        _state.value = _state.value.copy(
-            clienteId = clienteId,
-            nombre = "",
-            apellidos = "",
-            fechaRevision = hoyBackend
-        )
+        viewModelScope.launch {
+            try {
+                val cliente = repoClientes.obtenerClientePorId(clienteId.toInt())
+
+                _state.value = _state.value.copy(
+                    clienteId = clienteId,
+                    nombre = cliente.nombre,
+                    apellidos = cliente.apellidos,
+                    fechaRevision = hoyBackend,
+                    error = null
+                )
+            } catch (_: Exception) {
+                _state.value = _state.value.copy(
+                    clienteId = clienteId,
+                    nombre = "",
+                    apellidos = "",
+                    fechaRevision = hoyBackend,
+                    error = "No se pudo cargar la ficha del cliente."
+                )
+            }
+        }
     }
 
     fun updateFechaRevision(v: String) = _state.update { it.copy(fechaRevision = v) }
@@ -74,7 +90,7 @@ class NuevaRevisionLcViewModel(application: Application) : AndroidViewModel(appl
         if (s.isSaving) return
 
         if (s.fechaRevision.length != 10) {
-            _state.update { it.copy(error = "fecha_revision inválida (YYYY-MM-DD)") }
+            _state.update { it.copy(error = "Fecha inválida.") }
             return
         }
 
@@ -113,11 +129,11 @@ class NuevaRevisionLcViewModel(application: Application) : AndroidViewModel(appl
                         idRevisionCreada = resp.id_revision_lc
                     )
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 _state.update {
                     it.copy(
                         isSaving = false,
-                        error = e.message ?: "Error guardando revisión LC"
+                        error = "No se pudo guardar la revisión de lentes de contacto. Inténtalo de nuevo."
                     )
                 }
             }
