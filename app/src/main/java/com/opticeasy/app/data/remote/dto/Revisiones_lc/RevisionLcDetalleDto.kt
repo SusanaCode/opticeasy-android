@@ -9,25 +9,22 @@ data class RevisionLcDetalleDto(
     val anamnesis: String?,
     val otras_pruebas: String?,
 
-    // OD
-    val esfera_od: String?,
-    val cilindro_od: String?,
+    val esfera_od: Double?,
+    val cilindro_od: Double?,
     val eje_od: Int?,
-    val av_od: String?,
-    val add_od: String?,
-    val dominante_od: String?,
+    val av_od: Double?,
+    val add_od: Double?,
+    val dominante_od: Int?,
     val tipo_lente_od: String?,
 
-    // OI
-    val esfera_oi: String?,
-    val cilindro_oi: String?,
+    val esfera_oi: Double?,
+    val cilindro_oi: Double?,
     val eje_oi: Int?,
-    val av_oi: String?,
-    val add_oi: String?,
-    val dominante_oi: String?,
+    val av_oi: Double?,
+    val add_oi: Double?,
+    val dominante_oi: Int?,
     val tipo_lente_oi: String?,
 
-    // Optometrista
     val optometrista: String?,
     val optometrista_colegiado: Int?
 )

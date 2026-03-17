@@ -60,10 +60,17 @@ class NuevaRevisionLcViewModel(application: Application) : AndroidViewModel(appl
     fun updateAddOd(v: Double?) = _state.update { it.copy(addOd = v) }
 
     fun updateDominanteOd(value: Boolean) {
-        _state.value = _state.value.copy(
-            dominanteOd = value,
-            dominanteOi = if (value) false else _state.value.dominanteOi
-        )
+        _state.value = if (value) {
+            _state.value.copy(
+                dominanteOd = true,
+                dominanteOi = false
+            )
+        } else {
+            _state.value.copy(
+                dominanteOd = false,
+                dominanteOi = true
+            )
+        }
     }
 
     fun updateTipoLenteOd(v: String) = _state.update { it.copy(tipoLenteOd = v) }
@@ -79,10 +86,17 @@ class NuevaRevisionLcViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun updateDominanteOi(value: Boolean) {
-        _state.value = _state.value.copy(
-            dominanteOi = value,
-            dominanteOd = if (value) false else _state.value.dominanteOd
-        )
+        _state.value = if (value) {
+            _state.value.copy(
+                dominanteOi = true,
+                dominanteOd = false
+            )
+        } else {
+            _state.value.copy(
+                dominanteOi = false,
+                dominanteOd = true
+            )
+        }
     }
 
     fun guardar() {

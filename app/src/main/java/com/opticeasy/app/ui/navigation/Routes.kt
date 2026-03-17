@@ -29,6 +29,8 @@ object Routes {
 
     const val DETALLE_REVISION_GAFA = "detalle_revision_gafa"
 
+    const val DETALLE_REVISION_LC = "detalle_revision_lc"
+
 }
 
 

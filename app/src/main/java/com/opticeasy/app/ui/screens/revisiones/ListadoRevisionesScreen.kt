@@ -29,7 +29,8 @@ fun ListadoRevisionesScreen(
     onBack: () -> Unit,
     onIrCliente: () -> Unit,
     onAbrirPdf: (String, String) -> Unit,
-    onAbrirDetalleGafa: (Long) -> Unit
+    onAbrirDetalleGafa: (Long) -> Unit,
+    onAbrirDetalleLc: (Long) -> Unit
 ) {
     val vm: RevisionesListadoViewModel = viewModel()
     val state by vm.state.collectAsState()
@@ -117,12 +118,13 @@ fun ListadoRevisionesScreen(
                         clienteId = clienteId,
                         nombre = cliente.nombre,
                         apellidos = cliente.apellidos,
-                        onAbrirPdf = onAbrirPdf
+                        onAbrirPdf = onAbrirPdf,
+                        onAbrirDetalleLc = onAbrirDetalleLc
                     )
 
                     Spacer(Modifier.height(18.dp))
 
-                    Button(
+                    OutlinedButton(
                         onClick = onIrCliente,
                         shape = shape16,
                         modifier = Modifier
@@ -140,7 +142,6 @@ fun ListadoRevisionesScreen(
 }
 
 @Composable
-
 private fun SeccionGafa(
     items: List<RevisionGafaListItemDto>,
     context: Context,
@@ -168,8 +169,6 @@ private fun SeccionGafa(
             od = "ESF ${item.esfera_od ?: "—"}  CIL ${item.cilindro_od ?: "—"}  EJE ${item.eje_od?.toString() ?: "—"}  AV ${item.av_od ?: "—"}  ADD ${item.add_od ?: "—"}",
             oi = "ESF ${item.esfera_oi ?: "—"}  CIL ${item.cilindro_oi ?: "—"}  EJE ${item.eje_oi?.toString() ?: "—"}  AV ${item.av_oi ?: "—"}  ADD ${item.add_oi ?: "—"}",
             optometrista = item.optometrista,
-
-            // 👉 CLICK FECHA → PDF
             onClickPdf = {
                 val file = PdfRevisionesUtils.generarPdfRevisionGafa(
                     context = context,
@@ -197,7 +196,6 @@ private fun SeccionGafa(
 
                 onAbrirPdf(file.absolutePath, "Informe de revisión - Gafa")
             },
-
             onClickDetalle = {
                 onAbrirDetalleGafa(item.id_revision_gafa.toLong())
             }
@@ -213,7 +211,8 @@ private fun SeccionLc(
     clienteId: Long,
     nombre: String,
     apellidos: String,
-    onAbrirPdf: (String, String) -> Unit
+    onAbrirPdf: (String, String) -> Unit,
+    onAbrirDetalleLc: (Long) -> Unit
 ) {
     Text("REVISIONES PARA LC", style = MaterialTheme.typography.titleSmall)
     Divider(
@@ -233,7 +232,6 @@ private fun SeccionLc(
             od = "ESF ${item.esfera_od ?: "—"}  CIL ${item.cilindro_od ?: "—"}  EJE ${item.eje_od?.toString() ?: "—"}  AV ${item.av_od ?: "—"}  ADD ${item.add_od ?: "—"}",
             oi = "ESF ${item.esfera_oi ?: "—"}  CIL ${item.cilindro_oi ?: "—"}  EJE ${item.eje_oi?.toString() ?: "—"}  AV ${item.av_oi ?: "—"}  ADD ${item.add_oi ?: "—"}",
             optometrista = item.optometrista,
-
             onClickPdf = {
                 val file = PdfRevisionesUtils.generarPdfRevisionLc(
                     context = context,
@@ -261,9 +259,8 @@ private fun SeccionLc(
 
                 onAbrirPdf(file.absolutePath, "Informe de revisión - Lentes de contacto")
             },
-
             onClickDetalle = {
-                println("Abrir detalle revisión LC ID: ${item.id_revision_lc}")
+                onAbrirDetalleLc(item.id_revision_lc.toLong())
             }
         )
         Spacer(Modifier.height(10.dp))
