@@ -135,7 +135,7 @@ fun DetalleRevisionLcScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
+                .padding(start = 24.dp, end = 24.dp, bottom = 24.dp)
         ) {
             Spacer(Modifier.height(12.dp))
 

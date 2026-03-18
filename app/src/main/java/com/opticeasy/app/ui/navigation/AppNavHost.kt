@@ -62,7 +62,7 @@ fun AppNavHost() {
                             launchSingleTop = true
                         }
                     } else {
-                        navController.navigate(Routes.LOGIN) {
+                        navController.navigate(Routes.INICIO) {
                             popUpTo(Routes.SPLASH) { inclusive = true }
                             launchSingleTop = true
                         }
@@ -121,7 +121,7 @@ fun AppNavHost() {
                 onLogout = {
                     CoroutineScope(Dispatchers.Main).launch {
                         sessionManager.clear()
-                        navController.navigate(Routes.LOGIN) {
+                        navController.navigate(Routes.INICIO) {
                             popUpTo(0) { inclusive = true }
                             launchSingleTop = true
                         }
