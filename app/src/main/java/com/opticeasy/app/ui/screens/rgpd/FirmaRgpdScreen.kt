@@ -430,5 +430,7 @@ private fun exportSignatureToBase64Png(
     val baos = ByteArrayOutputStream()
     bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
     val bytes = baos.toByteArray()
-    return Base64.encodeToString(bytes, Base64.NO_WRAP)
+    val base64 = Base64.encodeToString(bytes, Base64.NO_WRAP)
+
+    return "data:image/png;base64,$base64"
 }
