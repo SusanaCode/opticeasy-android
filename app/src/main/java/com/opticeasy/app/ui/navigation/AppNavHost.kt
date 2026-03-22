@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -35,6 +36,8 @@ import com.opticeasy.app.viewmodel.clientes.ClientesBuscarViewModel
 import com.opticeasy.app.viewmodel.revisiones.gafa.NuevaRevisionGafaViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 @Composable
@@ -47,6 +50,27 @@ fun AppNavHost() {
     val sessionManager = SessionManager(context)
     val adminUsuarios by sessionManager.adminUsuarios.collectAsState(initial = 0)
     val idUsuario by sessionManager.idUsuario.collectAsState(initial = null)
+    val coroutineScope = rememberCoroutineScope()
+    val sessionTimeoutMillis = 5 * 60 * 1000L
+
+    LaunchedEffect(idUsuario) {
+        if (idUsuario != null && idUsuario != 0L) {
+            while (isActive) {
+                delay(5000)
+
+                val expired = sessionManager.isSessionExpired(sessionTimeoutMillis)
+
+                if (expired) {
+                    sessionManager.clear()
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                    break
+                }
+            }
+        }
+    }
 
     NavHost(
         navController = navController,
@@ -119,7 +143,7 @@ fun AppNavHost() {
                     navController.navigate(Routes.GESTION_USUARIOS)
                 },
                 onLogout = {
-                    CoroutineScope(Dispatchers.Main).launch {
+                    coroutineScope.launch {
                         sessionManager.clear()
                         navController.navigate(Routes.INICIO) {
                             popUpTo(0) { inclusive = true }
