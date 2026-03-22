@@ -6,13 +6,34 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 private val Context.dataStore by preferencesDataStore(name = "session")
 
 class SessionManager(private val context: Context) {
+
+    // Caché en memoria: se inicializa a null y se actualiza
+    // con el primer valor que emite DataStore
+    private val _tokenCache = MutableStateFlow<String?>(null)
+
+    init {
+        // Lanza una coroutine interna que mantiene la caché
+        // actualizada sin bloquear ningún hilo
+        CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
+            context.dataStore.data
+                .map { it[KEY_TOKEN] }
+                .collect { token ->
+                    _tokenCache.value = token
+                }
+        }
+    }
 
     companion object {
         private val KEY_ID_USUARIO = longPreferencesKey("id_usuario")
@@ -44,6 +65,9 @@ class SessionManager(private val context: Context) {
             prefs[KEY_LAST_ACTIVITY] = now
         }
     }
+
+    // Acceso síncrono al token desde cualquier hilo — seguro
+    val tokenSync: String? get() = _tokenCache.value
 
     val idUsuario: Flow<Long?> =
         context.dataStore.data.map { it[KEY_ID_USUARIO] }

@@ -10,24 +10,20 @@ import okhttp3.Response
 class AuthInterceptor(
     private val context: Context
 ) : Interceptor {
-
+    // SessionManager se crea una sola vez (no en cada intercepción)
+    val sessionManager = SessionManager(context)
     override fun intercept(chain: Interceptor.Chain): Response {
-        val sessionManager = SessionManager(context)
+        // Acceso síncrono desde la caché en memoria — no bloquea
+        val token = sessionManager.tokenSync
 
-        val token = runBlocking {
-            sessionManager.token.first()
-        }
-
-        val request = chain.request()
-
-        val newRequest = if (!token.isNullOrBlank()) {
-            request.newBuilder()
+        val request = if (!token.isNullOrBlank()) {
+            chain.request().newBuilder()
                 .addHeader("Authorization", "Bearer $token")
                 .build()
         } else {
-            request.newBuilder().build()
+            chain.request()
         }
 
-        return chain.proceed(newRequest)
+        return chain.proceed(request)
     }
 }
