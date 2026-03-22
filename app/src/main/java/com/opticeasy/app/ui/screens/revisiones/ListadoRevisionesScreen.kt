@@ -1,7 +1,6 @@
 package com.opticeasy.app.ui.screens.revisiones
 
 import android.content.Context
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -280,41 +279,73 @@ private fun RevisionCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = OpticCardBg
-        )
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Row(
-            modifier = Modifier.padding(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.Top
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
         ) {
-            AssistChip(
-                onClick = onClickPdf,
-                label = { Text(formatFecha(fecha)) }
+            Text(
+                text = "Fecha: ${formatFecha(fecha)}",
+                style = MaterialTheme.typography.titleMedium
             )
 
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable { onClickDetalle() }
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = "GRADUACIÓN OD",
+                style = MaterialTheme.typography.labelSmall
+            )
+            Text(
+                text = od,
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "GRADUACIÓN OI",
+                style = MaterialTheme.typography.labelSmall
+            )
+            Text(
+                text = oi,
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = "OPTOMETRISTA",
+                style = MaterialTheme.typography.labelSmall
+            )
+            Text(
+                text = optometrista ?: "—",
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = onClickDetalle,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Text("GRADUACIÓN OD", style = MaterialTheme.typography.labelSmall)
-                Text(od, style = MaterialTheme.typography.bodySmall)
-                Spacer(Modifier.height(6.dp))
-                Text("GRADUACIÓN OI", style = MaterialTheme.typography.labelSmall)
-                Text(oi, style = MaterialTheme.typography.bodySmall)
+                Text("Ver detalle")
             }
 
-            Surface(
-                tonalElevation = 1.dp,
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.widthIn(min = 120.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = onClickPdf,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Column(modifier = Modifier.padding(10.dp)) {
-                    Text("OPTOMETRISTA", style = MaterialTheme.typography.labelSmall)
-                    Text(optometrista ?: "—", style = MaterialTheme.typography.bodySmall)
-                }
+                Text("Ver receta PDF")
             }
         }
     }
